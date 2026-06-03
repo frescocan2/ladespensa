@@ -471,23 +471,20 @@
     .pg-lbl{font-size:14px;color:var(--mute);margin-top:5px;font-weight:500;letter-spacing:-0.01em;}
     .pantry-gauge.off .pg-num #pantry-pct{color:var(--mute);}
 
-    .pan-row{display:flex;align-items:flex-start;gap:11px;padding:12px 16px;border-bottom:0.5px solid var(--line);}
+    .pan-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:0.5px solid var(--line);}
     .sec-rows .pan-row:last-child{border-bottom:none;}
-    .pan-ind{width:13px;height:13px;border-radius:50%;flex-shrink:0;background:var(--c);margin-top:3px;}
-    .pan-row.falta .pan-ind{background:transparent;box-shadow:inset 0 0 0 2px var(--line);}
-    .pan-mid{flex:1;min-width:0;}
-    .pan-top{display:flex;align-items:center;gap:8px;}
-    .pan-name{flex:1;font-size:16px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .pan-ind{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--c);}
+    .pan-row.falta .pan-ind{background:transparent;box-shadow:inset 0 0 0 1.5px var(--mute-2);}
+    .pan-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+    .pan-name{font-size:16px;font-weight:500;letter-spacing:-0.02em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .pan-row.falta .pan-name{color:var(--mute);}
-    .pan-act{border:none;cursor:pointer;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:var(--r-card);background:var(--chip);color:var(--ink);white-space:nowrap;flex-shrink:0;}
-    .pan-rep{border:none;cursor:pointer;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:var(--r-card);background:var(--accent);color:var(--ink);white-space:nowrap;flex-shrink:0;}
+    .pan-meta{font-size:13px;color:var(--mute);font-weight:400;letter-spacing:-0.01em;}
+    .pan-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+    .pan-act{border:none;cursor:pointer;font:inherit;font-size:13px;font-weight:600;padding:7px 13px;border-radius:var(--r-full);background:var(--chip);color:var(--ink);white-space:nowrap;flex-shrink:0;}
+    .pan-rep{border:none;cursor:pointer;font:inherit;font-size:13px;font-weight:600;padding:7px 13px;border-radius:var(--r-full);background:var(--accent);color:#0F0F0E;white-space:nowrap;flex-shrink:0;}
     .pan-rep:active{background:var(--accent-press);}
     .pan-row.falta .pan-act{background:var(--ink);color:var(--bg);}
     .pan-act:active{opacity:.7;}
-    .pan-prog{height:4px;border-radius:3px;background:var(--chip);overflow:hidden;margin:8px 0 5px;}
-    .pan-prog>span{display:block;height:100%;background:var(--ink);border-radius:3px;transition:width .4s ease;}
-    .pan-row.falta .pan-prog>span{background:var(--danger);}
-    .pan-meta{font-size:13px;color:var(--mute);font-weight:500;letter-spacing:-0.01em;}
 
     /* Selector de duración */
     .dur-sub{font-size:14px;color:var(--mute);line-height:1.45;margin:2px 2px 14px;}
@@ -2019,21 +2016,19 @@
   }
   function filaDespensa(d){
     const falta=d.estado==='agotado'; const c=(mapaCat[d.categoria]||{color:'#aaa'}).color;
-    const cons= falta?100:Math.min(100,Math.round(100*diasDesde(d.abiertoEn)/(d.dias||7)));
     const quedan = (d.dias||7)-diasDesde(d.abiertoEn);
     const porAcabar = !falta && quedan<=2;
     const yaEnLista = items.some(i=>!i.comprado && norm(i.nombre)===norm(d.nombre));
     return `<div class="pan-row${falta?' falta':''}${porAcabar?' poracabar':''}">
       <span class="pan-ind" style="--c:${c}"></span>
       <div class="pan-mid">
-        <div class="pan-top">
-          <span class="pan-name" data-catd="${d.id}">${esc(d.nombre)}</span>
-          ${porAcabar && !yaEnLista ? `<button class="pan-rep" data-reponer="${d.id}">Reponer ya</button>` : ''}
-          <button class="pan-act" data-pantoggle="${d.id}">${falta?'Repuesto':'Se acabó'}</button>
-          <button class="lst-ic" data-delpan="${d.id}" aria-label="Quitar de la despensa">${SVG_X_SM}</button>
-        </div>
-        <div class="pan-prog"><span style="width:${cons}%"></span></div>
+        <span class="pan-name" data-catd="${d.id}">${esc(d.nombre)}</span>
         <span class="pan-meta">${restanteTxt(d)}${aprendidoTxt(d)}</span>
+      </div>
+      <div class="pan-actions">
+        ${porAcabar && !yaEnLista ? `<button class="pan-rep" data-reponer="${d.id}">Reponer</button>` : ''}
+        <button class="pan-act" data-pantoggle="${d.id}">${falta?'Repuesto':'Se acabó'}</button>
+        <button class="lst-ic" data-delpan="${d.id}" aria-label="Quitar de la despensa">${SVG_X_SM}</button>
       </div>
     </div>`;
   }
