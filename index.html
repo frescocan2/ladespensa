@@ -2492,17 +2492,26 @@
   ];
   let recetasSlider = [];
   let recetaOffset = 0;                                          // avanza al pulsar "Otras"
-  function recetasHacibles(){                                  // todas las recetas 100% hacibles, rotadas por día + offset manual
-    const hac = RECETAS.filter(r => r.ing.every(disponible))
+  const REC_VISIBLES = 6;                                        // cuántas tarjetas muestra el slider
+  function recetasHaciblesTodas(){                              // TODAS las 100% hacibles (sin recortar)
+    return RECETAS.filter(r => r.ing.every(disponible))
       .map(r => ({ humor:false, n:r.n, t:r.t, r:r.r, ing:r.ing, pasos:r.pasos, tip:r.tip, total:r.ing.length }));
-    if(hac.length<=1) return hac;
-    const h=new Date(); const off=((h.getFullYear()*372 + h.getMonth()*31 + h.getDate()) + recetaOffset) % hac.length;
-    return hac.slice(off).concat(hac.slice(0, off));
+  }
+  function recetasHacibles(){                                  // ventana de REC_VISIBLES, rotada por día + offset manual
+    const hac = recetasHaciblesTodas();
+    if(hac.length<=REC_VISIBLES) return hac;
+    const h=new Date();
+    const base=(h.getFullYear()*372 + h.getMonth()*31 + h.getDate());
+    const off=((base + recetaOffset) % hac.length + hac.length) % hac.length;
+    // toma REC_VISIBLES de forma circular desde off
+    const out=[];
+    for(let k=0;k<REC_VISIBLES;k++){ out.push(hac[(off+k)%hac.length]); }
+    return out;
   }
   function humorPool(){                                         // frases de humor para rellenar (mín. variedad)
     const enCasa = despensa.filter(d=>d.estado!=='agotado');
     const out=[], vistos=new Set();
-    const push=h=>{ if(!vistos.has(h.n)){ vistos.add(h.n); out.push({ humor:true, n:h.n, t:h.t, ing:enCasa.map(d=>d.nombre), pasos:[h.linea] }); } };
+    const push=h=>{ if(h && !vistos.has(h.n)){ vistos.add(h.n); out.push({ humor:true, n:h.n, t:h.t, ing:enCasa.map(d=>d.nombre), pasos:[h.linea] }); } };
     enCasa.forEach(d=>{ const k=claveHumor(d.nombre); if(k) push(HUMOR[k]); });
     if(enCasa.length && !out.length){ const nom=enCasa[0].nombre; push({ n:cap(nom)+' y poco más', t:'0 min', linea:'Con solo '+nom.toLowerCase()+' no se hacen milagros. ¿Y si te pasas por el súper?' }); }
     HUMOR_GEN.forEach(push);
@@ -2812,8 +2821,8 @@
   // Receta del día
   document.getElementById('receta-slider').addEventListener('click', e=>{ const b=e.target.closest('[data-recidx]'); if(b) abrirReceta(+b.dataset.recidx); });
   document.getElementById('rec-refresh').addEventListener('click', ()=>{
-    const hac = RECETAS.filter(r=>r.ing.every(disponible)).length;
-    if(hac>3){ recetaOffset += 3; haptic('ligero'); renderReceta(); }
+    const total = recetasHaciblesTodas().length;
+    if(total > REC_VISIBLES){ recetaOffset += REC_VISIBLES; haptic('ligero'); renderReceta(); }
     else { toastMsg('No hay más recetas con lo que tienes'); }
   });  document.getElementById('receta-slider').addEventListener('scroll', ()=>{ marcarPunto(recetaActiva()); }, { passive:true });
   document.getElementById('receta-dots').addEventListener('click', e=>{ const b=e.target.closest('[data-dot]'); if(!b) return; const s=document.getElementById('receta-slider'); s.scrollTo({ left:(+b.dataset.dot)*(s.clientWidth+12), behavior:'smooth' }); });
