@@ -2822,8 +2822,11 @@
   document.getElementById('receta-slider').addEventListener('click', e=>{ const b=e.target.closest('[data-recidx]'); if(b) abrirReceta(+b.dataset.recidx); });
   document.getElementById('rec-refresh').addEventListener('click', ()=>{
     const total = recetasHaciblesTodas().length;
-    if(total > REC_VISIBLES){ recetaOffset += REC_VISIBLES; haptic('ligero'); renderReceta(); }
-    else { toastMsg('No hay más recetas con lo que tienes'); }
+    if(total > REC_VISIBLES){
+      // avanza una ventana completa, o al menos lo justo para que cambie con pools pequeños
+      const paso = total > REC_VISIBLES*2 ? REC_VISIBLES : Math.max(1, total - REC_VISIBLES);
+      recetaOffset += paso; haptic('ligero'); renderReceta();
+    } else { toastMsg('No hay más recetas con lo que tienes'); }
   });  document.getElementById('receta-slider').addEventListener('scroll', ()=>{ marcarPunto(recetaActiva()); }, { passive:true });
   document.getElementById('receta-dots').addEventListener('click', e=>{ const b=e.target.closest('[data-dot]'); if(!b) return; const s=document.getElementById('receta-slider'); s.scrollTo({ left:(+b.dataset.dot)*(s.clientWidth+12), behavior:'smooth' }); });
   document.getElementById('rec-close').addEventListener('click', closeSheet);
