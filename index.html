@@ -943,7 +943,7 @@
   function guardarMiTienda(){ escribir(K.mitienda,miTienda); }
   function guardarMarket(){ escribir(K.market,market); }
   function guardarFijos(){ escribir(K.fijos,fijos); }
-  function guardarDespensa(){ escribir(K.despensa,despensa); }
+  function guardarDespensa(){ escribir(K.despensa,despensa); if(typeof invalidarRecetas==='function') invalidarRecetas(); }
 
   // Identidad local (para presencia y autoría en equipo)
   let presentes = {};                              // { uid:{nombre,ts} } de la sala activa
@@ -2313,7 +2313,7 @@
           const key=s=>(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
           for(const r of arr){ if(r&&r.n&&Array.isArray(r.ing)&&Array.isArray(r.pasos)&&!vistos.has(key(r.n))){ fusion.push(r); vistos.add(key(r.n)); } }
           for(const r of RECETAS){ if(!vistos.has(key(r.n))){ fusion.push(r); vistos.add(key(r.n)); } }
-          if(fusion.length){ RECETAS=fusion; try{ renderReceta(); }catch(e){} }
+          if(fusion.length){ RECETAS=fusion; if(typeof invalidarRecetas==='function') invalidarRecetas(); try{ renderReceta(); }catch(e){} }
         })
         .catch(()=>{});
     }catch(e){}
@@ -2433,28 +2433,46 @@
   const CANON = (() => { const m={}; for(const c in SINONIMOS){ for(const v of SINONIMOS[c]){ m[norm(v)] = c; } } return m; })();
   // quita plural simple (-s / -es) para emparejar mejor
   const sinPlural = w => w.replace(/es$/,'').replace(/s$/,'');
+  const _canonCache = new Map();
   function canon(nombre){
     const n = norm(nombre);
-    if(CANON[n]) return CANON[n];
-    // match por palabra contenida (ej. "pechuga de pollo" → pollo)
-    for(const v in CANON){ if(n===v || n.includes(' '+v) || n.includes(v+' ') || n.startsWith(v+' ') || n.endsWith(' '+v)){ return CANON[v]; } }
-    // intento con singular de cada palabra del nombre
-    const palabras = n.split(/\s+/).map(sinPlural);
-    for(const p of palabras){ if(CANON[p]) return CANON[p]; }
-    return n;
-  }
-  function tengoEnCasa(nombre){
-    const c = canon(nombre);
-    return despensa.some(d => {
-      if(d.estado==='agotado') return false;
-      if(canon(d.nombre)===c) return true;                 // mismo canónico (sinónimos/variantes)
-      const a=norm(d.nombre), b=norm(nombre);              // respaldo textual
-      if(a.includes(b) || b.includes(a)) return true;
-      return sinPlural(a)===sinPlural(b);                  // respaldo singular/plural
-    });
+    const hit = _canonCache.get(n); if(hit!==undefined) return hit;
+    let res;
+    if(CANON[n]) res = CANON[n];
+    else {
+      res = null;
+      for(const v in CANON){ if(n===v || n.includes(' '+v) || n.includes(v+' ') || n.startsWith(v+' ') || n.endsWith(' '+v)){ res = CANON[v]; break; } }
+      if(res===null){ const palabras = n.split(/\s+/).map(sinPlural); for(const p of palabras){ if(CANON[p]){ res = CANON[p]; break; } } }
+      if(res===null) res = n;
+    }
+    _canonCache.set(n, res);
+    return res;
   }
   const BASICOS = new Set(['sal','aceite','agua','vinagre','pimienta','comino','pimenton','oregano','laurel','curry','canela','perejil','tomillo','romero','nuez moscada','azafran','guindilla','especias']);
   const esBasico = i => BASICOS.has(norm(i));
+  // ── Optimización: precalcular el "set canónico" de la despensa una sola vez ──
+  // En vez de canonizar cada producto por cada ingrediente de cada receta (lento con miles),
+  // se calcula un Set con los canónicos de lo que hay en casa y se consulta en O(1).
+  let _despSet = null, _despNorms = null;
+  function recalcularDespSet(){
+    _despSet = new Set();
+    _despNorms = [];
+    for(const d of despensa){
+      if(d.estado==='agotado') continue;
+      _despSet.add(canon(d.nombre));
+      _despNorms.push(norm(d.nombre));
+    }
+  }
+  function tengoEnCasa(nombre){
+    if(_despSet===null) recalcularDespSet();
+    const c = canon(nombre);
+    if(_despSet.has(c)) return true;                            // mismo canónico (rápido)
+    const b = norm(nombre), bp = sinPlural(b);
+    for(const a of _despNorms){                                // respaldo textual sobre lista corta (la despensa)
+      if(a.includes(b) || b.includes(a) || sinPlural(a)===bp) return true;
+    }
+    return false;
+  }
   const disponible = i => esBasico(i) || tengoEnCasa(i);      // básicos (sal, aceite, vinagre, especias) se asumen
   const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
   let recetaHoy = null;
@@ -2493,10 +2511,15 @@
   let recetasSlider = [];
   let recetaOffset = 0;                                          // avanza al pulsar "Otras"
   const REC_VISIBLES = 6;                                        // cuántas tarjetas muestra el slider
-  function recetasHaciblesTodas(){                              // TODAS las 100% hacibles (sin recortar)
-    return RECETAS.filter(r => r.ing.every(disponible))
+  let _hacCache = null;
+  function recetasHaciblesTodas(){                              // TODAS las 100% hacibles (cacheado)
+    if(_hacCache) return _hacCache;
+    _hacCache = RECETAS.filter(r => r.ing.every(disponible))
       .map(r => ({ humor:false, n:r.n, t:r.t, r:r.r, ing:r.ing, pasos:r.pasos, tip:r.tip, total:r.ing.length }));
+    return _hacCache;
   }
+  // Invalida las cachés cuando cambia la despensa (se llama desde donde se modifica)
+  function invalidarRecetas(){ _despSet=null; _hacCache=null; }
   function recetasHacibles(){                                  // ventana de REC_VISIBLES, rotada por día + offset manual
     const hac = recetasHaciblesTodas();
     if(hac.length<=REC_VISIBLES) return hac;
