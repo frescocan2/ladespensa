@@ -2104,7 +2104,7 @@
   }
 
   // ── Receta del día (recetario local, según lo que tienes en casa) ──
-  const RECETAS = [
+  let RECETAS = [
     // ─────────── HUEVOS ───────────
     { n:'Tortilla francesa', t:'7 min', r:'1 ración', ing:['huevo','aceite','sal'], pasos:['Casca 2-3 huevos en un bol y bátelos con una pizca de sal hasta que espumen ligeramente.','Calienta una sartén pequeña a fuego medio con media cucharada de aceite y reparte bien.','Vierte el huevo y, cuando empiece a cuajar por los bordes, lleva el huevo del exterior hacia el centro con una espátula.','Cuando la base esté hecha pero el centro aún jugoso, dobla la tortilla en tres.','Deja 20 segundos más y sirve.'], tip:'No la cocines de más: la tortilla francesa perfecta queda cremosa por dentro.' },
     { n:'Huevo frito con puntilla', t:'5 min', r:'1 ración', ing:['huevo','aceite','sal'], pasos:['Calienta abundante aceite (que cubra el fondo) en una sartén pequeña a fuego fuerte.','Casca el huevo en un cuenco y deslízalo con cuidado al aceite caliente.','Con una cuchara, baña la clara con el aceite para que se forme la puntilla crujiente en los bordes.','Cuando la clara esté cuajada y la yema líquida, retira con una espumadera.','Escurre sobre papel y añade sal.'], tip:'El aceite debe estar bien caliente: así la puntilla queda crujiente y la yema, líquida.' },
@@ -2300,7 +2300,159 @@
     { n:'Helado de plátano', t:'10 min', r:'2 raciones', ing:['platano','cacao','leche'], pasos:['Congela plátanos maduros en rodajas.','Tritúralos congelados con un poco de leche.','Sale una crema tipo helado al instante.','Añade cacao o mantequilla de cacahuete si quieres.','Come al momento o congela un rato.'], tip:'Solo plátano congelado triturado: helado cremoso sin azúcar ni nata.' },
     { n:'Bizcocho de yogur', t:'45 min', r:'8 raciones', ing:['yogur','harina','huevo','azucar','aceite','limon'], pasos:['Usa el vaso de yogur como medida: 1 yogur, 2 de azúcar, 3 de harina, 1 de aceite.','Bate con 3 huevos, ralladura de limón y levadura.','Vierte en un molde.','Hornea a 180 ºC 35 minutos.','Comprueba con un palillo.'], tip:'El bizcocho clásico medido con el vaso del yogur: infalible.' },
   ];
-  function tengoEnCasa(nombre){ const q=norm(nombre); return despensa.some(d=> d.estado!=='agotado' && (norm(d.nombre).includes(q) || q.includes(norm(d.nombre)))); }
+  // Carga ampliada de recetas desde recetas.json (mismo origen). El array de arriba
+  // es el fallback que garantiza funcionamiento offline; si el JSON carga, amplía.
+  (function cargarRecetasExternas(){
+    try{
+      fetch('./recetas.json', { cache:'no-cache' })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          const arr = data && Array.isArray(data.recetas) ? data.recetas : (Array.isArray(data) ? data : null);
+          if(!arr || !arr.length) return;
+          const vistos=new Set(), fusion=[];
+          const key=s=>(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+          for(const r of arr){ if(r&&r.n&&Array.isArray(r.ing)&&Array.isArray(r.pasos)&&!vistos.has(key(r.n))){ fusion.push(r); vistos.add(key(r.n)); } }
+          for(const r of RECETAS){ if(!vistos.has(key(r.n))){ fusion.push(r); vistos.add(key(r.n)); } }
+          if(fusion.length){ RECETAS=fusion; try{ renderReceta(); }catch(e){} }
+        })
+        .catch(()=>{});
+    }catch(e){}
+  })();
+  // ─────────── EMPAREJADO SEMÁNTICO DE INGREDIENTES ───────────
+  // Reduce cada ingrediente a un término "canónico" para que la app entienda
+  // variantes y sinónimos: "pechuga de pollo"→pollo, "zucchini"→calabacin,
+  // "crema de leche"→nata, "macarrones"→pasta, "palta"→aguacate, etc.
+  const SINONIMOS = {
+    // ─── Carnes ───
+    pollo:['pollo','pechuga','pechugas','muslo','muslos','contramuslo','contramuslos','alitas','pollo asado'],
+    ternera:['ternera','vacuno','res','carne de vacuno','filete de ternera','bistec','bife','escalope'],
+    'carne picada':['carne picada','picada','carne molida','molida','carne para hamburguesa'],
+    cerdo:['cerdo','lomo de cerdo','chuleta','chuletas','panceta','secreto','solomillo de cerdo','costilla','costillas','careta'],
+    bacon:['bacon','beicon','tocino','tocineta'],
+    jamon:['jamon','jamon serrano','jamon cocido','jamon york','jamon iberico','lacon'],
+    chorizo:['chorizo','chorizos','longaniza'],
+    salchicha:['salchicha','salchichas','frankfurt','salchichon'],
+    cordero:['cordero','paletilla de cordero','pierna de cordero'],
+    pavo:['pavo','pechuga de pavo'],
+    conejo:['conejo'],
+    morcilla:['morcilla'],
+    // ─── Pescados y mariscos ───
+    gambas:['gambas','gamba','langostinos','langostino','camarones','camaron'],
+    atun:['atun','bonito'],
+    salmon:['salmon','salmones'],
+    merluza:['merluza','pescadilla'],
+    bacalao:['bacalao'],
+    sardina:['sardina','sardinas'],
+    pulpo:['pulpo'],
+    mejillones:['mejillones','mejillon','choros'],
+    calamar:['calamar','calamares','chipiron','chipirones','sepia','jibia'],
+    pescado:['pescado','filete de pescado','lomo de pescado'],
+    dorada:['dorada','lubina'],
+    trucha:['trucha'],
+    almeja:['almeja','almejas'],
+    // ─── Lácteos y huevos ───
+    nata:['nata','crema','crema de leche','crema para cocinar','crema agria'],
+    leche:['leche','leche entera','leche desnatada','leche semidesnatada','leche evaporada'],
+    yogur:['yogur','yogures','yogurt','yoghurt'],
+    queso:['queso','quesos','parmesano','mozzarella','cheddar','rallado','queso rallado','queso crema','requeson','ricotta','feta','queso de cabra','emmental'],
+    huevo:['huevo','huevos','yema','yemas','clara','claras'],
+    mantequilla:['mantequilla','manteca','margarina'],
+    // ─── Verduras y hortalizas ───
+    calabacin:['calabacin','zucchini','zapallito'],
+    berenjena:['berenjena','berenjenas'],
+    tomate:['tomate','tomates','tomate frito','tomate triturado','passata','tomate pera','tomate cherry','tomate natural'],
+    pimiento:['pimiento','pimientos','morron','morrones','pimiento rojo','pimiento verde','aji','pimiento amarillo'],
+    cebolla:['cebolla','cebollas','cebolla morada'],
+    cebolleta:['cebolleta','cebollino','cebollin'],
+    ajo:['ajo','ajos','diente de ajo','dientes de ajo'],
+    patata:['patata','patatas','papa','papas'],
+    champinon:['champinon','champinones','setas','seta','hongos','hongo','portobello','niscalos'],
+    judia_verde:['judia verde','judias verdes','vainas','ejotes','chauchas','habichuela','vainitas'],
+    guisantes:['guisantes','chicharos','arvejas','petit pois'],
+    maiz:['maiz','choclo','elote','mazorca'],
+    zanahoria:['zanahoria','zanahorias'],
+    espinacas:['espinacas','espinaca','acelga','acelgas'],
+    lechuga:['lechuga','lechugas','rucula','canonigos','mezclum','escarola'],
+    pepino:['pepino','pepinos'],
+    apio:['apio'],
+    puerro:['puerro','puerros'],
+    brocoli:['brocoli','brecol'],
+    coliflor:['coliflor'],
+    col:['col','repollo','coles'],
+    calabaza:['calabaza','zapallo'],
+    remolacha:['remolacha','betabel'],
+    esparragos:['esparragos','esparrago'],
+    alcachofa:['alcachofa','alcachofas'],
+    aguacate:['aguacate','palta'],
+    aceituna:['aceituna','aceitunas','olivas','oliva'],
+    setas:['setas','seta'],
+    // ─── Legumbres ───
+    garbanzos:['garbanzos','garbanzo'],
+    lentejas:['lentejas','lenteja'],
+    alubias:['alubias','alubia','judias blancas','frijoles','frijol','porotos','habichuelas','fabes','caraotas'],
+    // ─── Frutas ───
+    platano:['platano','banana','banano','guineo'],
+    manzana:['manzana','manzanas'],
+    pera:['pera','peras'],
+    limon:['limon','limones','lima','limas'],
+    naranja:['naranja','naranjas'],
+    fresa:['fresa','fresas','frutilla','frutillas'],
+    pina:['pina','ananas'],
+    melocoton:['melocoton','durazno','duraznos'],
+    uva:['uva','uvas'],
+    mango:['mango','mangos'],
+    coco:['coco'],
+    arandano:['arandano','arandanos'],
+    // ─── Frutos secos ───
+    almendra:['almendra','almendras'],
+    nuez:['nuez','nueces'],
+    pasas:['pasas','pasa','uvas pasas'],
+    avellana:['avellana','avellanas'],
+    cacahuete:['cacahuete','cacahuetes','mani'],
+    // ─── Cereales / pasta / pan ───
+    pasta:['pasta','macarrones','espaguetis','espagueti','tallarines','penne','fusilli','tagliatelle','noquis','lazos','plumas','fideos','raviolis','canelones','lasana','lasagna'],
+    arroz:['arroz','arroces'],
+    pan:['pan','baguette','barra de pan','hogaza','pan de molde','pan rallado','tostada','tostadas'],
+    harina:['harina','harinas','harina de trigo'],
+    avena:['avena','copos de avena'],
+    // ─── Despensa / varios ───
+    azucar:['azucar','azucar moreno','azucar glas'],
+    miel:['miel'],
+    chocolate:['chocolate','cacao','chocolate negro','chocolate con leche','pepitas de chocolate'],
+    cafe:['cafe'],
+    levadura:['levadura','levadura quimica','polvo de hornear'],
+    vino:['vino','vino blanco','vino tinto'],
+    cerveza:['cerveza'],
+    caldo:['caldo','caldo de pollo','caldo de verduras','fondo'],
+    tofu:['tofu'],
+    mayonesa:['mayonesa','mahonesa'],
+    mostaza:['mostaza'],
+    jengibre:['jengibre'],
+  };
+  // Índice inverso variante→canónico (precalculado)
+  const CANON = (() => { const m={}; for(const c in SINONIMOS){ for(const v of SINONIMOS[c]){ m[norm(v)] = c; } } return m; })();
+  // quita plural simple (-s / -es) para emparejar mejor
+  const sinPlural = w => w.replace(/es$/,'').replace(/s$/,'');
+  function canon(nombre){
+    const n = norm(nombre);
+    if(CANON[n]) return CANON[n];
+    // match por palabra contenida (ej. "pechuga de pollo" → pollo)
+    for(const v in CANON){ if(n===v || n.includes(' '+v) || n.includes(v+' ') || n.startsWith(v+' ') || n.endsWith(' '+v)){ return CANON[v]; } }
+    // intento con singular de cada palabra del nombre
+    const palabras = n.split(/\s+/).map(sinPlural);
+    for(const p of palabras){ if(CANON[p]) return CANON[p]; }
+    return n;
+  }
+  function tengoEnCasa(nombre){
+    const c = canon(nombre);
+    return despensa.some(d => {
+      if(d.estado==='agotado') return false;
+      if(canon(d.nombre)===c) return true;                 // mismo canónico (sinónimos/variantes)
+      const a=norm(d.nombre), b=norm(nombre);              // respaldo textual
+      if(a.includes(b) || b.includes(a)) return true;
+      return sinPlural(a)===sinPlural(b);                  // respaldo singular/plural
+    });
+  }
   const BASICOS = new Set(['sal','aceite','agua','vinagre','pimienta','comino','pimenton','oregano','laurel','curry','canela','perejil','tomillo','romero','nuez moscada','azafran','guindilla','especias']);
   const esBasico = i => BASICOS.has(norm(i));
   const disponible = i => esBasico(i) || tengoEnCasa(i);      // básicos (sal, aceite, vinagre, especias) se asumen
@@ -2369,7 +2521,8 @@
     wrap.classList.remove('hidden');
     recetasSlider = construirRecetas();
     slider.innerHTML = recetasSlider.map((r,i)=>{
-      const meta = r.humor ? r.pasos[0] : `${r.t} · ${r.total} ${r.total===1?'ingrediente':'ingredientes'}`;
+      const ingTxt = `${r.total} ${r.total===1?'ingrediente':'ingredientes'}`;
+      const meta = r.humor ? r.pasos[0] : (r.t ? `${r.t} · ${ingTxt}` : ingTxt);
       return `<button class="rec-card2${r.humor?' humor':''}" data-recidx="${i}">
         <div class="rec-name">${esc(r.n)}</div>
         <div class="rec-meta">${esc(meta)}</div>
@@ -2384,7 +2537,8 @@
   function abrirReceta(idx){
     const r = recetasSlider[idx]; if(!r) return;
     document.getElementById('rec-title').textContent=r.n;
-    document.getElementById('rec-time').textContent = r.r ? `${r.t} · ${r.r}` : r.t;
+    const nIng = (r.ing||[]).length;
+    document.getElementById('rec-time').textContent = (r.r ? `${r.t} · ${r.r}` : r.t) || `${nIng} ${nIng===1?'ingrediente':'ingredientes'}`;
     document.getElementById('rec-ing').innerHTML = (r.ing||[]).map(i=>
       `<div class="rec-ing-row ok"><span class="rec-ing-dot">${SVG_CHECK}</span>${esc(i)}${(!r.humor && esBasico(i))?' <span class="rec-basico">básico</span>':''}</div>`
     ).join('') || '<div class="rec-ing-row" style="color:var(--mute)">Nada de nada.</div>';
