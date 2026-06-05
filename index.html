@@ -3,14 +3,14 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v11-casi-hacibles · sellado 2026-06-04 19:32 UTC
+  BUILD: v12-bento · sellado 2026-06-05 18:26 UTC
 -->
 <html lang="es-ES">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F7F4" />
-  <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#0C0C0B" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBF9F3" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#000000" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="ladespensa" />
@@ -28,25 +28,25 @@
   <style>
     /* ═══ TOKENS ═══ */
     :root {
-      --bg:#F8F7F4; --card:#FFFFFF; --ink:#0F0F0E; --mute:#8A8880;
-      --ink-soft:rgba(15,15,14,0.60); --mute-2:rgba(15,15,14,0.42);
-      --line:rgba(0,0,0,0.09); --chip:rgba(0,0,0,0.05); --press:rgba(0,0,0,0.06);
-      --danger:#E8541E;
-      /* Acento de marca: estado positivo + acción primaria */
-      --accent:#ECFF00; --accent-press:#dcee00;
+      --bg:#FBF9F3; --card:#FFFFFF; --ink:#1C1C1E; --mute:#8E8E93;
+      --ink-soft:rgba(28,28,30,0.62); --mute-2:rgba(60,60,67,0.45);
+      --line:rgba(60,60,67,0.13); --chip:rgba(120,120,128,0.10); --press:rgba(120,120,128,0.16);
+      --danger:#FF3B30;
+      /* Acento de marca: amarillo dorado de iOS Notes */
+      --accent:#FFD60A; --accent-press:#F0C500;
       /* Escala de radios */
       --r-ctrl:8px; --r-card:14px; --r-sheet:20px; --r-full:999px;
       /* Escala de elevación (2 niveles) */
       --elev-1:0 1px 3px rgba(0,0,0,0.05);
       --elev-2:0 8px 28px rgba(0,0,0,0.18);
-      /* Paleta de categorías armonizada (pasteles a luminosidad/saturación pareja) */
-      --cat-1:#C8EA3A; --cat-2:#FF9472; --cat-3:#8FB0FF; --cat-4:#5FD9D0; --cat-5:#FFCE38; --cat-6:#FF9FD6; --cat-7:#FBA94C;
+      /* Categorías: colores de sistema de iOS (los de las etiquetas de Notes) */
+      --cat-1:#34C759; --cat-2:#FF3B30; --cat-3:#007AFF; --cat-4:#00C7BE; --cat-5:#FF9500; --cat-6:#AF52DE; --cat-7:#5AC8FA;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg:#0C0C0B; --card:#1C1C1A; --ink:#F4F3F0; --mute:#88877F;
-        --ink-soft:rgba(244,243,240,0.62); --mute-2:rgba(244,243,240,0.40);
-        --line:rgba(255,255,255,0.10); --chip:rgba(255,255,255,0.07); --press:rgba(255,255,255,0.07);
+        --bg:#000000; --card:#1C1C1E; --ink:#F2F2F7; --mute:#8E8E93;
+        --ink-soft:rgba(235,235,245,0.62); --mute-2:rgba(235,235,245,0.40);
+        --line:rgba(84,84,88,0.36); --chip:rgba(120,120,128,0.24); --press:rgba(120,120,128,0.30);
         --elev-1:0 1px 3px rgba(0,0,0,0.4); --elev-2:0 8px 28px rgba(0,0,0,0.6);
       }
     }
@@ -198,9 +198,10 @@
     .section{margin:18px 20px 0;border-radius:var(--r-card);overflow:hidden;}
     .section.flash{animation:secFlash .9s ease;}
     @keyframes secFlash{0%,100%{box-shadow:none;}30%{box-shadow:0 0 0 2px var(--accent);}}
-    .sec-band{background:var(--c);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;}
-    .sec-name{font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#0F0F0E;}
-    .sec-count{font-size:12px;font-weight:700;letter-spacing:0.02em;color:rgba(15,15,14,0.55);font-variant-numeric:tabular-nums;}
+    .sec-band{background:transparent;padding:12px 16px 8px;display:flex;align-items:center;gap:8px;justify-content:flex-start;}
+    .sec-dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex-shrink:0;}
+    .sec-name{font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink);}
+    .sec-count{font-size:12px;font-weight:600;letter-spacing:0.02em;color:var(--mute);font-variant-numeric:tabular-nums;margin-left:auto;}
     .sec-rows{background:var(--card);overflow:hidden;}
 
     /* ═══ FILAS ═══ */
@@ -501,6 +502,162 @@
     .dur-opt:active{background:var(--press);}
 
     .hidden{display:none !important;}
+    /* ════════════════ DISEÑO BENTO ════════════════ */
+    .app{ max-width:480px; margin:0 auto; padding:16px 14px 96px; }
+    body{ background:var(--bg); }
+    .view.hidden{ display:none; }
+    .view{ animation:bentoFade .3s ease; }
+    @keyframes bentoFade{ from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:none;} }
+    @media (prefers-reduced-motion: reduce){ .view{animation:none;} }
+
+    /* Cabecera bento */
+    .hd-bento{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 4px 18px; border:none; }
+    .hd-bento .brand{ display:flex; align-items:center; gap:9px; }
+    .hd-bento .mark{ width:28px; height:28px; flex-shrink:0; color:var(--ink); }
+    .hd-bento .mark svg{ width:100%; height:100%; display:block; overflow:visible; }
+    .hd-bento .hd-wordmark{ font-size:24px; font-weight:700; letter-spacing:-0.04em; line-height:1; color:var(--ink); position:relative; top:2px; }
+    .hd-bento .hd-actions{ display:flex; gap:8px; }
+    .hd-bento .hd-action{ width:42px; height:42px; border-radius:var(--r-full); border:none; background:var(--card); box-shadow:0 1px 2px rgba(0,0,0,.04); display:grid; place-items:center; cursor:pointer; color:var(--ink); }
+    .hd-bento .hd-action svg{ width:20px; height:20px; }
+    .hd-bento .hd-action:active{ background:var(--press); }
+
+    /* Rejilla bento */
+    .bento{ display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:start; }
+    .bento .col2{ grid-column:span 2; }
+    .box{ background:var(--card); border-radius:22px; padding:18px; border:1px solid var(--line); position:relative; overflow:hidden; }
+    .box.acc{ background:var(--accent); border-color:transparent; }
+    .box.ink{ background:var(--ink); color:var(--bg); border-color:transparent; }
+    .box-label{ font-size:12px; font-weight:600; letter-spacing:.02em; text-transform:uppercase; color:var(--mute); margin-bottom:10px; }
+
+    /* Hero box (frase grande) */
+    .hero-box{ padding:22px; }
+    .hero-box .hero-frase,.hero-box .lh-frase{ font-size:30px; font-weight:700; letter-spacing:-0.04em; line-height:1.06; color:var(--ink); text-wrap:balance; }
+    .hero-box .hero-frase:empty{ display:none; }
+    .hero-urgente{ display:flex; flex-direction:column; gap:0; margin-top:16px; }
+    .hero-urgente:empty{ display:none; }
+
+    /* Caja de añadir */
+    .add-box{ padding:10px; }
+    .add-box .add{ margin:0; display:flex; gap:8px; }
+
+    /* Filas de despensa: cada categoría su propia caja bento */
+    .pantry-rows{ background:transparent; border:none; border-radius:0; overflow:visible; padding:0; display:flex; flex-direction:column; gap:10px; }
+    .pantry-rows:empty{ display:none; }
+    #view-despensa .section{ background:var(--card); border:1px solid var(--line); border-radius:22px; overflow:hidden; margin:0; }
+    #view-despensa .colab-note{ background:var(--card); border:1px solid var(--line); border-radius:22px; padding:18px; color:var(--mute); font-size:14px; line-height:1.5; }
+    #view-despensa .empty-sugs{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+
+    /* Lista picker dentro de box */
+    .list-pick-box .list-pick.big{ font-size:22px; font-weight:200; letter-spacing:-0.025em; color:var(--ink); background:transparent; border:none; padding:0; display:inline-flex; align-items:center; gap:6px; cursor:pointer; margin-bottom:6px; }
+    .list-pick-box .lh-frase{ font-size:24px; }
+
+    /* Barra de progreso lista */
+    .lh-bar{ margin-top:14px; height:8px; border-radius:var(--r-full); background:var(--chip); overflow:hidden; }
+    .lh-bar>span{ display:block; height:100%; border-radius:var(--r-full); background:var(--accent); transition:width .5s cubic-bezier(.2,.8,.2,1); }
+    .lista-hero.completa .lh-bar>span{ background:var(--cat-4); }
+
+    /* Segmentos / chips / secciones ocupan ancho completo, sin márgenes propios */
+    .bento .seg{ margin:0; }
+    .bento .chips{ margin:0; }
+    .bento #secciones{ display:flex; flex-direction:column; gap:10px; }
+    .lista-box{ background:var(--card); border:1px solid var(--line); border-radius:22px; overflow:hidden; }
+    .desp-box{ background:var(--card); border:1px solid var(--line); border-radius:22px; overflow:hidden; }
+    .desp-box .pan-row:last-child{ border-bottom:none; }
+    /* Bloque plegable "Más opciones" */
+    .mas{ border:1px solid var(--line); border-radius:22px; background:var(--card); overflow:hidden; }
+    .mas .mas-sum{ list-style:none; display:flex; align-items:center; justify-content:space-between; padding:16px 18px; cursor:pointer; font-size:14px; font-weight:600; color:var(--ink-soft); -webkit-tap-highlight-color:transparent; }
+    .mas .mas-sum::-webkit-details-marker{ display:none; }
+    .mas .mas-sum svg{ width:18px; height:18px; transition:transform .25s; color:var(--mute); }
+    .mas[open] .mas-sum svg{ transform:rotate(180deg); }
+    .mas .mas-body{ padding:0 18px 18px; display:flex; flex-direction:column; gap:16px; }
+    .mas .mas-body .seg{ margin:0; }
+    .mas .mas-body .chips{ margin:0; }
+    .mas .mas-body .sug-block,.mas .mas-body .fijos{ margin:0; }
+    .mas-seg-h{ font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--mute); }
+
+    /* Recetas en rejilla bento */
+    .rec-head-box{ display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
+    .rec-head-box .hero-frase{ font-size:26px; }
+    .rec-head-box .rec-refresh{ flex-shrink:0; }
+    .rec-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .rec-grid .rec-card2{ background:var(--card); border:1px solid var(--line); border-radius:22px; padding:18px; display:flex; flex-direction:column; min-height:130px; cursor:pointer; text-align:left; font:inherit; color:var(--ink); }
+    .rec-grid .rec-card2:active{ background:var(--press); }
+    .rec-grid .rec-card2.casi{ border-style:dashed; }
+    .rec-grid .rec-card2 .rec-name{ font-size:19px; font-weight:600; letter-spacing:-0.02em; line-height:1.14; }
+    .rec-grid .rec-card2 .rec-meta{ font-size:13px; color:var(--mute); margin-top:5px; }
+    .rec-grid .rec-card2 .rec-falta{ font-size:12px; color:var(--danger); font-weight:600; margin-top:8px; }
+    .rec-grid .rec-card2 .rec-cta{ margin-top:auto; padding-top:12px; display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:600; }
+    .rec-grid .rec-card2.humor{ background:var(--chip); border-style:dashed; }
+    .rec-grid .rec-card2.humor .rec-meta{ color:var(--ink-soft); }
+    /* primera receta destacada en flúo */
+    .rec-grid .rec-card2:first-child:not(.humor){ background:var(--accent); border-color:transparent; grid-column:span 2; }
+    .rec-grid .rec-card2:first-child .rec-falta{ color:#9a3412; }
+
+    /* Pestañas flotantes */
+    .tabs{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%); display:flex; gap:4px; background:var(--ink); padding:5px; border-radius:var(--r-full); box-shadow:0 8px 28px rgba(0,0,0,.20); z-index:40; }
+    .tabs .tab{ border:none; background:transparent; color:rgba(255,255,255,.55); font:inherit; font-size:14px; font-weight:600; padding:10px 20px; border-radius:var(--r-full); cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color .2s; }
+    .tabs .tab.on{ background:var(--bg); color:var(--ink); }
+    @media (prefers-color-scheme: dark){ .tabs .tab.on{ background:var(--card); } }
+
+    /* Empty / hist / sug dentro del bento, sin márgenes laterales extra */
+    .bento .empty,.bento .hist-wrap,.bento .sug-block,.bento .fijos,.bento .share-in{ margin:0; }
+    .fijos-box .sheet-btn,.add-box{ margin:0; }
+    /* Cajas de contador */
+    .stat-box{ min-height:120px; display:flex; flex-direction:column; }
+    .stat-box .stat-n{ font-size:42px; font-weight:200; letter-spacing:-0.04em; line-height:1; }
+    .stat-box .stat-l{ font-size:13px; color:var(--mute); margin-top:4px; }
+    .box.acc .stat-l,.box.ink .stat-l{ color:inherit; opacity:.6; }
+    .box.acc .box-label{ color:rgba(15,15,14,.5); }
+    .box.ink .box-label{ color:rgba(255,255,255,.5); }
+
+    /* Caja Atención: filas con puntito de color */
+    .atencion-box .urg-item{ display:flex; align-items:center; gap:11px; padding:11px 0; border-bottom:0.5px solid var(--line); }
+    .atencion-box .urg-item:first-of-type{ padding-top:4px; }
+    .atencion-box .urg-item:last-child{ border-bottom:none; padding-bottom:0; }
+    .atencion-box .urg-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; background:var(--cat-5); }
+    .atencion-box .urg-dot.ago{ background:var(--danger); }
+    .atencion-box .urg-dot.aca{ background:var(--cat-5); }
+    .atencion-box .urg-txt{ font-size:17px; color:var(--ink); letter-spacing:-0.01em; }
+
+    /* Caja Por categoría */
+    .cat-box{ min-height:150px; }
+    .catmini{ display:flex; align-items:center; gap:10px; padding:7px 0; font-size:16px; }
+    .catmini .catdot{ width:11px; height:11px; border-radius:50%; flex-shrink:0; }
+    .catmini .catmini-n{ color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+    .catmini .cnt{ margin-left:auto; padding-left:8px; color:var(--mute); font-variant-numeric:tabular-nums; flex-shrink:0; }
+
+    /* Caja Recetas (acceso) */
+    .rec-access-box{ min-height:150px; display:flex; flex-direction:column; cursor:pointer; }
+    .rec-access-box:active{ background:var(--press); }
+    .rec-access-n{ font-size:42px; font-weight:200; letter-spacing:-0.04em; line-height:1; }
+    .rec-access-box .stat-l{ font-size:13px; color:var(--mute); margin-top:4px; }
+    .rec-access-box .box-cta{ margin-top:auto; padding-top:14px; display:inline-flex; align-items:center; gap:7px; font-size:15px; font-weight:600; }
+    .box-cta .arrow{ width:24px; height:24px; border-radius:var(--r-full); background:var(--ink); color:var(--bg); display:grid; place-items:center; }
+    /* ── Ritmo cromático de la home ── */
+    /* Hero con tinte cálido muy suave */
+    #view-despensa .hero-box{ background:linear-gradient(135deg, #FFF8E0 0%, #FFFDF5 100%); border-color:rgba(255,193,7,.18); }
+    /* Atención: blanca y limpia; el color lo ponen los puntitos */
+    .atencion-box{ background:var(--card); border-color:var(--line); }
+    .atencion-box .box-label{ color:var(--mute); }
+    /* Recetas dorada: texto oscuro legible */
+    .rec-access-box.acc .box-label{ color:rgba(28,28,30,.55); }
+    .rec-access-box.acc .stat-l{ color:rgba(28,28,30,.55); }
+    .rec-access-box.acc .box-cta .arrow{ background:var(--ink); color:var(--accent); }
+    /* Caja guiño: frase con personalidad */
+    .guino-box{ display:flex; align-items:center; gap:14px; background:var(--card); }
+    .guino-emoji{ font-size:26px; line-height:1; flex-shrink:0; }
+    .guino-txt{ font-size:15px; color:var(--ink-soft); letter-spacing:-0.01em; line-height:1.3; }
+    /* Fila: Por categoría (izq) + columna derecha (Recetas arriba, guiño rellenando el hueco) */
+    .cat-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:stretch; }
+    .cat-row .cat-box{ margin:0; }
+    .cat-right{ display:flex; flex-direction:column; gap:10px; min-height:0; }
+    .cat-right .rec-access-box{ flex:0 0 auto; }
+    .cat-right .guino-box{ flex:1 1 auto; }
+    @media (prefers-color-scheme: dark){
+      #view-despensa .hero-box{ background:var(--card); border-color:var(--line); }
+      .atencion-box{ background:var(--card); border-color:var(--line); }
+      .rec-access-box.acc .box-label,.rec-access-box.acc .stat-l{ color:rgba(28,28,30,.55); }
+    }
   </style>
 </head>
 
@@ -508,69 +665,74 @@
 <div class="app">
 
   <!-- ══════ HOME · DESPENSA ══════ -->
-  <div id="view-despensa">
-    <header class="hd hd-home">
-      <div class="brand">
-        <div class="brand-line">
-          <span class="mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path class="mark-casa" pathLength="100" d="M9.5 20.5 L6.2 20.5 Q4 20.5 4 18.3 L4 11.7 Q4 9.5 5.73 8.14 L10.74 4.19 Q12 3.2 13.26 4.19 L18.27 8.14 Q20 9.5 20 11.7 L20 18.3 Q20 20.5 17.8 20.5 L14.5 20.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path class="mark-check" pathLength="100" d="M8.6 13.9 L10.9 16.2 L15.4 10.6" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <div class="hd-wordmark">ladespensa</div>
-        </div>
-        <div class="hd-clock"><span id="clock-date">—</span><span class="hd-dot">·</span><span id="clock-time">—</span></div>
-      </div>
-      <div class="hd-actions">
-        <button class="hd-action primary" id="go-lista" aria-label="Ver la lista de la compra">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 5h2l1.7 9.4a1 1 0 0 0 1 .8h7.7a1 1 0 0 0 1-.8L19 8H6"/>
-            <circle cx="9" cy="19.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="19.5" r="1.4" fill="currentColor" stroke="none"/>
-          </svg>
-        </button>
-        <button class="hd-action" id="go-settings" aria-label="Ajustes">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h6M14 18h6"/>
-            <circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="12" cy="18" r="2"/>
-          </svg>
-        </button>
-      </div>
-    </header>
+  <!-- ══════ CABECERA COMPARTIDA ══════ -->
+  <header class="hd hd-bento">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path class="mark-casa" pathLength="100" d="M9.5 20.5 L6.2 20.5 Q4 20.5 4 18.3 L4 11.7 Q4 9.5 5.73 8.14 L10.74 4.19 Q12 3.2 13.26 4.19 L18.27 8.14 Q20 9.5 20 11.7 L20 18.3 Q20 20.5 17.8 20.5 L14.5 20.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="mark-check" pathLength="100" d="M8.6 13.9 L10.9 16.2 L15.4 10.6" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <div class="hd-wordmark">ladespensa</div>
+    </div>
+    <div class="hd-actions">
+      <button class="hd-action" id="open-share" aria-label="Compartir lista" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14V4M8.5 7.5 12 4l3.5 3.5"/><path d="M6 11v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
+      </button>
+      <button class="hd-action" id="go-settings" aria-label="Ajustes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h6M14 18h6"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="12" cy="18" r="2"/></svg>
+      </button>
+    </div>
+  </header>
+  <!-- clock oculto (lo usa la lógica, ya no se muestra) -->
+  <span id="clock-date" hidden>—</span><span id="clock-time" hidden>—</span>
 
-    <div class="wrap">
-      <div class="hero" id="pantry-gauge">
+  <!-- ══════ DESPENSA ══════ -->
+  <div id="view-despensa" class="view">
+    <div class="bento">
+      <div class="box col2 hero-box" id="pantry-gauge">
         <p class="hero-frase" id="pg-voz">—</p>
-        <div class="hero-resumen" id="hero-resumen"></div>
-        <div class="hero-urgente" id="hero-urgente"></div>
-        <div class="hero-bar" aria-hidden="true"><span id="hero-bar-fill" style="width:0%"></span><span id="hero-bar-falta" style="width:0%"></span></div>
+        <span id="hero-resumen" hidden></span><span id="hero-bar-fill" hidden></span><span id="hero-bar-falta" hidden></span>
         <span id="pantry-pct" hidden>—</span><span id="pantry-lbl" hidden></span>
       </div>
 
-      <div class="inner rec-wrap" id="receta-wrap">
-        <div class="rec-head-row">
-          <div class="rec-head">Recetas con lo que tienes</div>
-          <button class="rec-refresh" id="rec-refresh" aria-label="Otras recetas">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
-            Otras
-          </button>
-        </div>
-        <div class="rec-slider" id="receta-slider"></div>
-        <div class="rec-dots" id="receta-dots"></div>
+      <div class="box col2 atencion-box" id="atencion-box">
+        <div class="box-label">Atención</div>
+        <div class="hero-urgente" id="hero-urgente"></div>
       </div>
 
-      <div class="inner">
+      <div class="cat-row col2">
+        <div class="box cat-box">
+          <div class="box-label">Por categoría</div>
+          <div id="cat-resumen"></div>
+        </div>
+        <div class="cat-right">
+          <div class="box acc rec-access-box" id="go-recetas-box">
+            <div class="box-label">Recetas</div>
+            <div class="rec-access-n" id="rec-access-n">0</div>
+            <div class="stat-l">con lo que tienes</div>
+            <div class="box-cta">Ver <span class="arrow"><svg viewBox="0 0 24 24" width="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></div>
+          </div>
+          <div class="box guino-box" id="guino-box">
+            <span class="guino-emoji" id="guino-emoji">🥫</span>
+            <p class="guino-txt" id="guino-txt"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="box col2 add-box">
         <div class="add">
-          <input id="pantry-inp" type="text" autocomplete="off" maxlength="60" placeholder="Añadir (separa con comas)" />
+          <input id="pantry-inp" type="text" autocomplete="off" maxlength="60" placeholder="Añadir a la despensa (separa con comas)" />
           <button id="pantry-add" class="plusbtn" aria-label="Añadir a la despensa">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
           </button>
         </div>
       </div>
 
-      <div id="pantry-rows" class="pantry-rows"></div>
+      <div id="pantry-rows" class="pantry-rows col2"></div>
 
-      <div class="inner">
+      <div class="box col2 fijos-box" id="fijos-box-wrap">
         <button class="sheet-btn" id="pantry-fromfijos">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
           Añadir mis fijos a la despensa
@@ -580,97 +742,101 @@
   </div>
 
   <!-- ══════ LISTA ══════ -->
-  <div id="view-lista" class="hidden">
-    <header class="hd">
-      <div class="brand">
-        <button class="hd-action back" id="go-despensa" aria-label="Volver a la despensa">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+  <div id="view-lista" class="view hidden">
+    <div class="bento">
+      <div class="box col2 hero-box list-pick-box lista-hero" id="lista-hero">
+        <button class="list-pick big" id="open-lists">
+          <span id="list-name">Mi lista</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="brand-text">
-          <button class="list-pick big" id="open-lists">
-            <span id="list-name">Mi lista</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <span class="hd-sub" id="subtitulo">Lista vacía</span>
+        <p class="lh-frase" id="lh-frase">—</p>
+        <div class="lh-bar" aria-hidden="true"><span id="lh-bar-fill" style="width:0%"></span></div>
+        <span class="hd-sub" id="subtitulo" hidden>Lista vacía</span>
+      </div>
+
+      <div id="sharein" class="box col2 share-in hidden">
+        <div class="share-in-txt">
+          <strong>Lista compartida</strong>
+          <span id="sharein-sub"></span>
+        </div>
+        <div class="share-in-acts">
+          <button class="si-add" id="sharein-add">Añadir</button>
+          <button class="si-skip" id="sharein-skip">Descartar</button>
         </div>
       </div>
-      <div class="hd-actions">
-        <button class="hd-action" id="open-share" aria-label="Compartir lista">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 14V4M8.5 7.5 12 4l3.5 3.5"/>
-            <path d="M6 11v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/>
-          </svg>
-        </button>
-        <button class="hd-action" id="open-settings" aria-label="Ajustes">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h6M14 18h6"/>
-            <circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="12" cy="18" r="2"/>
-          </svg>
-        </button>
+
+      <div class="box col2 add-box">
+        <div class="add">
+          <input id="inp" type="text" inputmode="text" autocomplete="off" maxlength="60" placeholder="Nuevo producto" />
+          <button id="add" class="plusbtn" aria-label="Añadir producto">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+        <div class="ac hidden" id="autocomp"></div>
       </div>
-    </header>
 
-    <div class="wrap">
-    <div class="lista-hero" id="lista-hero">
-      <p class="lh-frase" id="lh-frase">—</p>
-      <div class="lh-bar" aria-hidden="true"><span id="lh-bar-fill" style="width:0%"></span></div>
-    </div>
-    <div id="sharein" class="share-in hidden">
-      <div class="share-in-txt">
-        <strong>Lista compartida</strong>
-        <span id="sharein-sub"></span>
+      <div id="secciones" class="col2"></div>
+
+      <div id="vacio" class="empty col2 hidden">
+        <div class="ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <h3>Tu lista está vacía</h3>
+        <p>Escribe un producto y pulsa +</p>
       </div>
-      <div class="share-in-acts">
-        <button class="si-add" id="sharein-add">Añadir</button>
-        <button class="si-skip" id="sharein-skip">Descartar</button>
+
+      <div id="histwrap" class="hist-wrap col2 hidden">
+        <div class="hist-h">
+          <span class="hist-label">Completado hoy</span>
+          <button id="clear" class="txtbtn">Borrar</button>
+        </div>
+        <div class="hist-rows" id="hist"></div>
       </div>
-    </div>
 
-    <div class="seg" id="seg"></div>
-
-    <div class="inner">
-      <div class="add">
-        <input id="inp" type="text" inputmode="text" autocomplete="off" maxlength="60" placeholder="Nuevo producto" />
-        <button id="add" class="plusbtn" aria-label="Añadir producto">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        </button>
-      </div>
-      <div class="ac hidden" id="autocomp"></div>
-    </div>
-
-    <div class="chips" id="chips"></div>
-
-    <div id="sugwrap" class="sug-block hidden">
-      <div class="sug-block-h">Sugeridos para ti</div>
-      <div class="sugs" id="sugeridos"></div>
-    </div>
-
-    <div id="fijoswrap" class="fijos hidden">
-      <div class="fijos-h">Fijos</div>
-      <div class="fijos-row" id="fijos"></div>
-    </div>
-
-    <div id="secciones"></div>
-
-    <div id="vacio" class="empty hidden">
-      <div class="ic">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
-          <circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
-        </svg>
-      </div>
-      <h3>Tu lista está vacía</h3>
-      <p>Escribe un producto y pulsa +</p>
-    </div>
-
-    <div id="histwrap" class="hist-wrap hidden">
-      <div class="hist-h">
-        <span class="hist-label">Completado hoy</span>
-        <button id="clear" class="txtbtn">Borrar</button>
-      </div>
-      <div class="hist-rows" id="hist"></div>
+      <!-- Extras plegables: sugeridos, fijos, recorrido -->
+      <details class="mas col2" id="mas-lista">
+        <summary class="mas-sum">
+          <span>Más opciones</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="mas-body">
+          <div id="sugwrap" class="sug-block hidden">
+            <div class="sug-block-h">Sugeridos para ti</div>
+            <div class="sugs" id="sugeridos"></div>
+          </div>
+          <div id="fijoswrap" class="fijos hidden">
+            <div class="fijos-h">Fijos</div>
+            <div class="fijos-row" id="fijos"></div>
+          </div>
+          <div class="chips" id="chips"></div>
+          <div class="mas-seg-h">Ordenar por recorrido</div>
+          <div class="seg" id="seg"></div>
+        </div>
+      </details>
     </div>
   </div>
+
+  <!-- ══════ RECETAS ══════ -->
+  <div id="view-recetas" class="view hidden">
+    <div class="bento">
+      <div class="box col2 hero-box rec-head-box">
+        <p class="hero-frase" id="rec-hero-frase">Recetas con lo que tienes</p>
+        <button class="rec-refresh" id="rec-refresh" aria-label="Otras recetas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+          Otras
+        </button>
+      </div>
+      <div class="rec-grid col2" id="receta-slider"></div>
+      <div class="rec-dots col2" id="receta-dots" hidden></div>
+    </div>
   </div>
+
+  <!-- ══════ PESTAÑAS FLOTANTES ══════ -->
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-vista="despensa">Despensa</button>
+    <button class="tab" data-vista="lista">Lista</button>
+    <button class="tab" data-vista="recetas">Recetas</button>
+  </nav>
 </div>
 
 <!-- TOAST -->
@@ -761,6 +927,14 @@
     </button>
     <input type="file" id="file-import" accept="application/json,.json" hidden />
   </div>
+
+  <div class="sheet-sec">
+    <div class="sheet-label">Pruebas</div>
+    <button class="sheet-btn" id="btn-demo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0"/><path d="M12 8v4l3 2"/></svg>
+      Cargar datos de prueba
+    </button>
+  </div>
 </div>
 
 <div class="sheet hidden" id="recetasheet">
@@ -850,13 +1024,13 @@
   const MIN_COMPRAS = 3;   // compras mínimas para una sugerencia fiable
 
   const CATEGORIAS = [
-    { id:'fruteria',   nombre:'Frutería',               color:'#C8EA3A' },
-    { id:'carniceria', nombre:'Carnicería/Charcutería', color:'#FF9472' },
-    { id:'lacteos',    nombre:'Lácteos',                color:'#8FB0FF' },
-    { id:'congelados', nombre:'Congelados',             color:'#5FD9D0' },
-    { id:'despensa',   nombre:'Despensa',               color:'#FFCE38' },
-    { id:'limpieza',   nombre:'Limpieza/Hogar',         color:'#FF9FD6' },
-    { id:'bebidas',    nombre:'Bebidas',                color:'#FBA94C' },
+    { id:'fruteria',   nombre:'Frutería',               color:'#34C759' },
+    { id:'carniceria', nombre:'Carnicería/Charcutería', color:'#FF3B30' },
+    { id:'lacteos',    nombre:'Lácteos',                color:'#007AFF' },
+    { id:'congelados', nombre:'Congelados',             color:'#00C7BE' },
+    { id:'despensa',   nombre:'Despensa',               color:'#FF9500' },
+    { id:'limpieza',   nombre:'Limpieza/Hogar',         color:'#AF52DE' },
+    { id:'bebidas',    nombre:'Bebidas',                color:'#5AC8FA' },
   ];
   const mapaCat = Object.fromEntries(CATEGORIAS.map(c => [c.id, c]));
   const TODAS = CATEGORIAS.map(c => c.id);
@@ -979,33 +1153,33 @@
     let pool;
     if(p===null){
       pool = ({ seco:[`${hola}.`,'Despensa vacía.'],
-        guasa:[`${hola}. La despensa está más vacía que un lunes por la mañana.`, `${hola}. Aquí no hay ni el aire.`, 'Despensa vacía: toca la heroica visita al súper.'],
+        guasa:[`${hola}. La despensa está más vacía que un lunes por la mañana.`, `${hola}. Aquí no hay ni el aire.`, 'Despensa vacía: toca la heroica visita al súper.', `${hola}. Esto parece la nevera de un estudiante a final de mes.`, 'Cero patatero. Ni un garbanzo despistado.', `${hola}. La cigüeña del súper no ha pasado todavía, ¿eh?`, 'Tan vacía que el eco te saluda.', `${hola}. Ni un mísero yogur caducado. Récord.`, 'Esto da más pena que una croqueta sola en el plato.'],
         carino:[`${hola}. La despensa está vacía, pero eso se arregla con un paseo al súper.`, `${hola}. Vamos a llenar esto poquito a poco.`] })[t];
     } else if(agot>0){                                            // lo más urgente: hay agotados
       pool = ({ seco:[`${agot} producto${agot>1?'s':''} agotado${agot>1?'s':''}. Ya en la lista.`],
-        guasa:[`Se te ha acabado ${agot==1?'algo':agot+' cosas'}. Tranqui, ya ${agot>1?'están':'está'} en la lista esperando rescate.`, `Bajón de inventario: ${agot} fuera de combate. A reponer.`],
+        guasa:[`Se te ha acabado ${agot==1?'algo':agot+' cosas'}. Tranqui, ya ${agot>1?'están':'está'} en la lista esperando rescate.`, `Bajón de inventario: ${agot} fuera de combate. A reponer.`, `${agot} baja${agot>1?'s':''} en el frente. Mandamos refuerzos a la lista.`, `RIP a ${agot==1?'un producto':agot+' productos'}. Ya ${agot>1?'descansan':'descansa'} en la lista de la compra.`, `${agot==1?'Uno menos':agot+' menos'}. La nevera está de luto.`, `Se acabó ${agot==1?'algo':agot+' cosas'}. Como las buenas excusas para no ir al súper.`],
         carino:[`Se ${agot>1?'han':'ha'} agotado ${agot} producto${agot>1?'s':''}, pero ${agot>1?'los':'lo'} tienes ya en la lista.`] })[t];
     } else if(acab>0){                                            // hay cosas por acabar
       pool = ({ seco:[`${acab} producto${acab>1?'s':''} por acabar pronto.`],
-        guasa:[`Ojo, ${acab==1?'una cosa anda':acab+' cosas andan'} en las últimas. Úsa${acab>1?'las':'la'} antes de que sea tarde.`, `${acab} producto${acab>1?'s':''} pidiendo paso a la salida. ¡A cocinar!`],
+        guasa:[`Ojo, ${acab==1?'una cosa anda':acab+' cosas andan'} en las últimas. Úsa${acab>1?'las':'la'} antes de que sea tarde.`, `${acab} producto${acab>1?'s':''} pidiendo paso a la salida. ¡A cocinar!`, `${acab==1?'Hay algo':'Hay '+acab+' cosas'} con un pie en el otro barrio. A darle uso.`, `Tic-tac: ${acab==1?'un producto':acab+' productos'} a punto de jubilarse.`, `${acab==1?'Algo':acab+' cosas'} en modo "cómeme ya o llórame luego".`, `Cuenta atrás para ${acab==1?'un producto':acab+' productos'}. No seas el malo de la película.`],
         carino:[`Hay ${acab} cosa${acab>1?'s':''} que conviene usar pronto. Aún estás a tiempo.`] })[t];
     } else if(p>=80){
       pool = ({ seco:['Despensa bien surtida.','Todo en orden.'],
-        guasa:[`${hola}. Despensa a tope: hoy no hay excusa para pedir pizza.`, 'Despensa de búnker. Sobrevivirías a un finde lluvioso sin pestañear.', `${hola}. Pareces alguien con la vida resuelta, fíjate tú.`],
+        guasa:[`${hola}. Despensa a tope: hoy no hay excusa para pedir pizza.`, 'Despensa de búnker. Sobrevivirías a un finde lluvioso sin pestañear.', `${hola}. Pareces alguien con la vida resuelta, fíjate tú.`, 'Esto es un supermercado en miniatura. Chapó.', `${hola}. Con esta despensa podrías dar de comer al vecindario.`, 'Nivel ardilla previsora: máximo. Bien ahí.', `${hola}. Tan llena que asusta. ¿Esperas el apocalipsis?`, 'Despensa de matrícula de honor. Que se enteren en casa.', `${hola}. Si Mercadona te viera, lloraría de orgullo.`],
         carino:[`${hola}. Tienes la despensa llenita, qué gusto.`, 'Todo en su sitio y bien fresco. Da gusto.'] })[t];
     } else if(p>=45){
       pool = ({ seco:['Despensa a medias.','Vas tirando.'],
-        guasa:[`${hola}. Ni rico ni pobre: en ese limbo de "ya iré mañana al súper".`, 'La despensa aguanta, pero no te flipes, campeón.'],
+        guasa:[`${hola}. Ni rico ni pobre: en ese limbo de "ya iré mañana al súper".`, 'La despensa aguanta, pero no te flipes, campeón.', `${hola}. Media despensa, media vida. Filosofía pura.`, 'Ni fu ni fa. La despensa está en modo "bueno, se puede improvisar algo".', `${hola}. Vas tirando, como todos un miércoles.`, 'A medio gas. Como tu motivación después de comer.'],
         carino:[`${hola}. Vas bien, la despensa aguanta.`, 'Ni mucho ni poco; de momento, tranquilidad.'] })[t];
     } else {
       pool = ({ seco:['Despensa baja, conviene reponer.'],
-        guasa:['Esto pinta a cena de "lo que haya por ahí suelto". Toca compra.', 'La nevera empieza a hacer eco. ¡Al súper!'],
+        guasa:['Esto pinta a cena de "lo que haya por ahí suelto". Toca compra.', 'La nevera empieza a hacer eco. ¡Al súper!', 'La despensa está a régimen sin haberlo pedido. A reponer.', 'Como no bajes al súper, hoy cenas creatividad con sal.', 'Quedan cuatro cosas y mal contadas. Espabila.', 'Esto ya no es minimalismo, es hambre programada.'],
         carino:['Se va vaciando; igual toca una vueltecita al súper.'] })[t];
     }
     const r=diasRacha();
     if(p!==null && agot===0 && r>=3 && new Date().getHours()%2===0){
       pool = pool.concat(({ seco:[`${r} días sin que se agote nada.`],
-        guasa:[`${r} días sin cargarte ni un triste tomate. Maestro de la logística.`, `Racha de ${r} días cuidando la despensa. Que no decaiga.`],
+        guasa:[`${r} días sin cargarte ni un triste tomate. Maestro de la logística.`, `Racha de ${r} días cuidando la despensa. Que no decaiga.`, `${r} días sin bajas. Esto es nivel sargento de intendencia.`, `Llevas ${r} días bordándolo. Que tiemble Mercadona.`, `${r} días de racha. Te mereces un aplauso (y una siesta).`],
         carino:[`Llevas ${r} días sin desperdiciar nada. ¡Muy bien!`] })[t]);
     }
     return pickV(pool);
@@ -1014,13 +1188,13 @@
     const t=tonoActual();
     const lista = nombres.length>1 ? (nombres.slice(0,2).join(', ')+(nombres.length>2?'…':'')) : nombres[0];
     return pickV(({ seco:[`Se agotó: ${lista}. A la lista.`],
-      guasa:[`Se nos fue ${lista}. La próxima lo pillamos.`, `Adiós a ${lista}. Ya está en la lista, no sufras.`],
+      guasa:[`Se nos fue ${lista}. La próxima lo pillamos.`, `Adiós a ${lista}. Ya está en la lista, no sufras.`, `${lista} ha pasado a mejor vida. Apuntado queda.`, `Un minuto de silencio por ${lista}. Va directo a la compra.`],
       carino:[`Se ha terminado ${lista}. Lo añado a la compra, tranqui.`] })[t]);
   }
   function vozCompletada(){
     const t=tonoActual(), n=nombreCorto();
     return pickV(({ seco:['Lista completada.'],
-      guasa:['¡Lista completada! Eres una máquina de tachar.', 'Todo comprado. Hoy sí que sí.'],
+      guasa:['¡Lista completada! Eres una máquina de tachar.', 'Todo comprado. Hoy sí que sí.', '¡Lista a cero! Medalla de oro en compra eficiente.', 'Misión cumplida. Ni un hueco en el carro sin justificar.', 'Lista finiquitada. Te has ganado el sofá.'],
       carino:[`¡Lista completada${n?', '+n:''}! Qué bien.`] })[t]);
   }
 
@@ -1145,7 +1319,7 @@
     const base = vozCompletada();
     let extra='';
     if(repuestos>0 && p!==null) extra = ({ seco:` ${repuestos} repuestos · despensa al ${p}%.`,
-      guasa:` ${repuestos} cositas a casa, despensa al ${p}%. ¡Crack!`,
+      guasa:[` ${repuestos} cositas a casa, despensa al ${p}%. ¡Crack!`, ` ${repuestos} fichajes nuevos, despensa al ${p}%. Equipazo.`, ` Despensa rellenada al ${p}%. La ardilla estaría orgullosa.`][Math.floor(Math.random()*3)],
       carino:` Has repuesto ${repuestos}, la despensa vuelve al ${p}%.` })[t];
     return base + extra;
   }
@@ -1182,13 +1356,14 @@
       const nm = (MARKETS.find(m=>m.id===market)||{}).nombre || '';
       html += `<div class="orden-hint">Ordenado para tu recorrido${nm?` · ${esc(nm)}`:''}</div>`;
     }
+    let filasActivas='';
     for (const catId of ordenActual()){
       const cat = mapaCat[catId]; if(!cat) continue;
       const grupo = activos.filter(i=>i.categoria===catId);
       if (!grupo.length) continue;
-      html += `<div class="lcat" style="--c:${cat.color}"><span class="lcat-dot"></span><span class="lcat-name">${esc(cat.nombre)}</span><span class="lcat-n">${grupo.length}</span></div>`;
-      html += grupo.map(filaActiva).join('');
+      filasActivas += grupo.map(filaActiva).join('');
     }
+    if(filasActivas) html += `<div class="lista-box">${filasActivas}</div>`;
     document.getElementById('secciones').innerHTML = html;
 
     renderSugeridos();
@@ -1226,7 +1401,7 @@
         const b=`<b>${pend}</b> producto${pend>1?'s':''}`;
         lhF.innerHTML = ({
           seco:`${b} por coger.`,
-          guasa: pend>6 ? `Uf, ${b} por delante. Coge fuerzas (y el carro grande).` : `Te faltan ${b}. ¡Al ataque!`,
+          guasa: pend>6 ? pickV([`Uf, ${b} por delante. Coge fuerzas (y el carro grande).`, `${b} en la lista. Esto es una expedición, no una compra.`]) : pickV([`Te faltan ${b}. ¡Al ataque!`, `${b} y a volar. Tú puedes.`, `Solo ${b}. Pan comido (nunca mejor dicho).`]),
           carino:`Te quedan ${b} por coger. Tú puedes.`
         })[tn];
         if(lhFill) lhFill.style.width = totalHoy ? Math.round(100*historial.length/totalHoy)+'%' : '0%';
@@ -1391,8 +1566,33 @@
       {id:uid(),nombre:'Tomates',categoria:'fruteria',cantidad:1,comprado:false,creado:iso(0),compradoEn:null,eventoId:null},
       {id:uid(),nombre:'Pechuga de pollo',categoria:'carniceria',cantidad:2,comprado:false,creado:iso(0),compradoEn:null,eventoId:null},
       {id:uid(),nombre:'Papel de cocina',categoria:'limpieza',cantidad:1,comprado:false,creado:iso(0),compradoEn:null,eventoId:null},
+      {id:uid(),nombre:'Manzanas',categoria:'fruteria',cantidad:6,comprado:true,creado:iso(0),compradoEn:iso(0),eventoId:null},
+      {id:uid(),nombre:'Pan',categoria:'despensa',cantidad:1,comprado:true,creado:iso(0),compradoEn:iso(0),eventoId:null},
     ];
-    escribir(K.items,itemsMock); escribir(K.compras,comprasMock);
+    // Despensa variada: frescos, por acabar y agotados → para ver hero, urgentes, categorías y recetas
+    const desp=(n,c,dias,abierto,estado)=>({id:uid(),nombre:n,categoria:c,dias,estimacion:dias,
+      abiertoEn:iso(abierto),estado:estado||'lleno',historial:[]});
+    const despMock=[
+      desp('Huevos','lacteos',21,3),        // fresco
+      desp('Leche','lacteos',7,6),          // se acaba (1 día)
+      desp('Yogur natural','lacteos',12,11),// se acaba (1 día)
+      desp('Queso','lacteos',20,4),
+      desp('Tomate','fruteria',7,6),        // se acaba
+      desp('Plátanos','fruteria',9,2),
+      desp('Cebolla','fruteria',30,5),
+      desp('Ajo','fruteria',60,10),
+      desp('Pasta','despensa',365,20),
+      desp('Arroz','despensa',365,15),
+      desp('Aceite de oliva','despensa',180,30),
+      desp('Harina','despensa',200,40),
+      desp('Café','despensa',60,25),
+      desp('Pan','despensa',4,0,'agotado'), // agotado
+      desp('Pollo','carniceria',3,0,'agotado'), // agotado
+      desp('Atún en lata','despensa',730,50),
+      desp('Agua','bebidas',30,12),
+      desp('Detergente','limpieza',40,10),
+    ];
+    escribir(K.items,itemsMock); escribir(K.compras,comprasMock); escribir(K.despensa,despMock);
   }
 
   // ═══ COPIA DE SEGURIDAD ═══
@@ -1981,6 +2181,47 @@
     });
     if(numEl)numEl.textContent = p===null?'—':p;
     if(lblEl)lblEl.textContent = p===null?'Tu despensa está vacía':despLabel(p);
+    // ── Caja ATENCIÓN: una fila por producto urgente, con puntito según gravedad ──
+    const urg2=document.getElementById('hero-urgente');
+    const atBox=document.getElementById('atencion-box');
+    if(urg2){
+      const urgItems=[];
+      despensa.filter(d=>d.estado==='agotado').forEach(d=> urgItems.push({n:d.nombre, txt:'agotado', cls:'ago'}));
+      despensa.filter(d=>d.estado!=='agotado' && ((d.dias||7)-diasDesde(d.abiertoEn))<=2)
+        .sort((a,b)=>((a.dias||7)-diasDesde(a.abiertoEn))-((b.dias||7)-diasDesde(b.abiertoEn)))
+        .forEach(d=>{ const q=Math.ceil((d.dias||7)-diasDesde(d.abiertoEn)); const txt = q<=0?'se acaba hoy':(q===1?'mañana':q+' días'); urgItems.push({n:d.nombre, txt, cls:'aca'}); });
+      urg2.innerHTML = urgItems.slice(0,6).map(it=>
+        `<div class="urg-item"><span class="urg-dot ${it.cls}"></span><span class="urg-txt">${esc(it.n)} · ${esc(it.txt)}</span></div>`
+      ).join('');
+      if(atBox) atBox.style.display = urgItems.length ? '' : 'none';
+    }
+    // ── Caja POR CATEGORÍA ──
+    const catR=document.getElementById('cat-resumen');
+    if(catR){
+      const corto={ carniceria:'Carnicería', limpieza:'Limpieza' };
+      const lineas=[];
+      for(const catId of ORDENES.general){
+        const cat=mapaCat[catId]; if(!cat) continue;
+        const n=despensa.filter(d=>d.categoria===catId).length;
+        if(!n) continue;
+        lineas.push(`<div class="catmini"><span class="catdot" style="background:${cat.color}"></span><span class="catmini-n">${esc(corto[catId]||cat.nombre)}</span><span class="cnt">${n}</span></div>`);
+      }
+      catR.innerHTML = lineas.join('');
+    }
+    // ── Caja RECETAS ──
+    const recN=document.getElementById('rec-access-n');
+    if(recN){ try{ recN.textContent = recetasHaciblesTodas().length; }catch(e){ recN.textContent='0'; } }
+    // ── Caja GUIÑO: frase con personalidad según el estado ──
+    const gT=document.getElementById('guino-txt'), gE=document.getElementById('guino-emoji');
+    if(gT){
+      let frases;
+      if(agotados>0) frases=[['🛒','Algo ha caído en combate. Ya descansa en la lista.'],['📝','Lista al rescate: toca repoblar la nevera.'],['🤷','Bueno, ya estaba viejo. A por otro.'],['🪦','Aquí yace un producto. Que la tierra le sea leve (y barata).'],['🚨','Alerta nevera: faltan refuerzos. Al súper, soldado.'],['😅','Se acabó. Como tu fuerza de voluntad con el chocolate.']];
+      else if(porAcabar>0) frases=[['⏳','Esto tiene los días contados. Tú decides su destino.'],['👀','Ojo, que algo se te va de las manos (literalmente).'],['🍳','Momento MasterChef: improvisa antes de que caduque.'],['🏃','Corre, que se te escapa la frescura.'],['⏰','Tic-tac. Esto no se va a comer solo, ¿eh?']];
+      else if(despensa.length===0) frases=[['🌱','Despensa en blanco. Como tu lista de propósitos.'],['🛍️','Más vacía que el metro un domingo a las 7am.'],['👻','Aquí no hay nada. Ni fantasmas, que se aburren.'],['🍽️','Plato vacío, nevera vacía. Toca expedición al súper.']];
+      else frases=[['💪','Despensa de revista. Que tiemble tu suegra.'],['🏆','Lo tienes todo. Hasta da rabia.'],['😌','Hoy no hay drama en la cocina. Disfrútalo.'],['🐿️','Nivel ardilla preparando el invierno: experto.'],['🦁','Rey de la selva… de los congelados.'],['🤓','Mira el listo, con la despensa cuadrada y todo.'],['🍀','Tan llena que da hasta suerte. No la gastes en pizza.']];
+      const pick=frases[Math.floor(Math.random()*frases.length)];
+      gE.textContent=pick[0]; gT.textContent=pick[1];
+    }
     const tot = despensa.length;
     if(fill) fill.style.width = tot ? Math.round(100*(frescos+porAcabar)/tot)+'%' : '0%';
     if(falta) falta.style.width = tot ? Math.round(100*agotados/tot)+'%' : '0%';
@@ -1990,35 +2231,19 @@
         <div class="hero-stat${porAcabar?' alerta':''}"><span class="n">${porAcabar}</span><span class="l">por acabar</span></div>
         <div class="hero-stat${agotados?' alerta':''}"><span class="n">${agotados}</span><span class="l">agotados</span></div>` : '';
     }
-    // Solo lo urgente: nombres concretos de agotados y por acabar (máx. 4 + "y N más")
-    const urg=document.getElementById('hero-urgente');
-    if(urg){
-      const fmt=(arr)=>{ const v=arr.slice(0,4).map(esc).join(' · '); return arr.length>4 ? `${v} y ${arr.length-4} más` : v; };
-      const ago = despensa.filter(d=>d.estado==='agotado').map(d=>d.nombre);
-      const aca = despensa.filter(d=>d.estado!=='agotado' && ((d.dias||7)-diasDesde(d.abiertoEn))<=2)
-        .sort((a,b)=>((a.dias||7)-diasDesde(a.abiertoEn))-((b.dias||7)-diasDesde(b.abiertoEn))).map(d=>d.nombre);
-      const lineas=[];
-      if(ago.length) lineas.push(`<span class="urg-row urg-ago"><span class="urg-dot"></span><span><span class="urg-k">Agotado:</span> <span class="urg-names">${fmt(ago)}</span></span></span>`);
-      if(aca.length) lineas.push(`<span class="urg-row urg-aca"><span class="urg-dot"></span><span><span class="urg-k">Se acaba:</span> <span class="urg-names">${fmt(aca)}</span></span></span>`);
-      urg.innerHTML = lineas.join('');
-    }
     // El botón "Añadir mis fijos" solo se muestra si hay fijos definidos
     const btnFijos=document.getElementById('pantry-fromfijos'); if(btnFijos) btnFijos.hidden = !fijos.length;
     if(!despensa.length){ cont.innerHTML=`<div class="colab-note">Añade lo que sueles tener en casa. Al añadirlo te pregunto cuánto te dura; cuando se acabe el tiempo, lo paso solo a la compra. Con unos cuantos usos aprenderé tu ritmo.</div>
       <div class="empty-sugs"><button class="esug" data-empadd="Leche">+ Leche</button><button class="esug" data-empadd="Huevos">+ Huevos</button><button class="esug" data-empadd="Pan">+ Pan</button><button class="esug" data-empadd="Aceite">+ Aceite</button></div>`; return; }
     const key=d=> d.estado==='agotado' ? -1 : ((d.dias||7)-diasDesde(d.abiertoEn));
-    let html='';
-    for (const catId of ORDENES.general){                        // agrupado por categoría
+    let filas='';
+    for (const catId of ORDENES.general){                        // agrupado por categoría (sin cabecera)
       const cat = mapaCat[catId]; if(!cat) continue;
       const grupo = despensa.filter(d=>d.categoria===catId).sort((a,b)=>key(a)-key(b));
       if(!grupo.length) continue;
-      const faltan = grupo.filter(d=>d.estado==='agotado').length;
-      html += `<div class="section" data-cat="${catId}" style="--c:${cat.color}">
-        <div class="sec-band"><span class="sec-name">${esc(cat.nombre)}</span><span class="sec-count">${faltan?faltan+' falta'+(faltan>1?'n':''):grupo.length}</span></div>
-        <div class="sec-rows">${grupo.map(filaDespensa).join('')}</div>
-      </div>`;
+      filas += grupo.map(filaDespensa).join('');
     }
-    cont.innerHTML = html;
+    cont.innerHTML = filas ? `<div class="desp-box">${filas}</div>` : '';
     renderReceta();
   }
   function filaDespensa(d){
@@ -2033,8 +2258,7 @@
         <span class="pan-meta">${restanteTxt(d)}${aprendidoTxt(d)}</span>
       </div>
       <div class="pan-actions">
-        ${porAcabar && !yaEnLista ? `<button class="pan-rep" data-reponer="${d.id}">Reponer</button>` : ''}
-        <button class="pan-act" data-pantoggle="${d.id}">${falta?'Repuesto':'Se acabó'}</button>
+        <button class="pan-act${falta?' repuesto':''}" data-pantoggle="${d.id}">${falta?'Ya lo tengo':'Se acabó'}</button>
         <button class="lst-ic" data-delpan="${d.id}" aria-label="Quitar de la despensa">${SVG_X_SM}</button>
       </div>
     </div>`;
@@ -2094,12 +2318,20 @@
   function removeDespensa(id){ const d=despensa.find(x=>x.id===id); despensa=despensa.filter(x=>x.id!==id); guardarDespensa(); if(d) despColabRemove(d.id); renderPantry(); }
   function despToggle(id){
     const d=despensa.find(x=>x.id===id); if(!d) return;
-    if(d.estado==='agotado'){                                 // "Repuesto" → vuelve a casa + quita de la lista
+    if(d.estado==='agotado'){                                 // "Ya lo tengo" → vuelve a casa + quita de la lista
       reponer(d);
       const it=items.find(i=>!i.comprado && norm(i.nombre)===norm(d.nombre));
       if(it) eliminar(it.id); else render();
       renderPantry();
-    } else { agotar(d); renderPantry(); }                     // "Se acabó" → aprende la duración real
+      toastMsg(`${d.nombre} de vuelta en casa`);
+    } else {                                                  // "Se acabó" → agota, aprende duración y a la lista
+      agotar(d);
+      if(!items.some(i=>!i.comprado && norm(i.nombre)===norm(d.nombre))){
+        añadirProducto(d.nombre, d.categoria, 1);
+      }
+      renderPantry();
+      toastMsg(`${d.nombre} se acabó · a la lista`);
+    }
     buzz(12);
   }
   function despDesdeFijos(){
@@ -2514,6 +2746,10 @@
     { n:'Vaso de agua del grifo', t:'1 min', linea:'Hidratación primero, cena después. Cuando pases por el súper.' },
     { n:'Plan B: pedir algo', t:'30 min', linea:'Mira fijamente la nevera. Si no aparece comida, ya sabes qué toca.' },
     { n:'Ayuno no planificado', t:'0 min', linea:'Hoy dieta del finde. O una vueltecita rápida al supermercado.' },
+    { n:'Sopa de viento', t:'0 min', linea:'Receta ancestral: abres la nevera, suspiras, y bajas al súper.' },
+    { n:'Hielo a la roca', t:'2 min', linea:'Crujiente, refrescante y sin calorías. También sin comida. Ve a comprar.' },
+    { n:'Tostada imaginaria', t:'0 min', linea:'Cierra los ojos e imagina el pan. Ahora abre la app de la compra.' },
+    { n:'Ensalada de excusas', t:'0 min', linea:'"Mañana voy al súper, hoy improviso." Clásico que no alimenta.' },
   ];
   let recetasSlider = [];
   let recetaOffset = 0;                                          // avanza al pulsar "Otras"
@@ -2563,11 +2799,16 @@
     return lista;
   }
   function renderReceta(){
-    const wrap=document.getElementById('receta-wrap'); if(!wrap) return;
     const slider=document.getElementById('receta-slider'); if(!slider) return;
     const dots=document.getElementById('receta-dots');
-    if(!despensa.length){ recetasSlider=[]; wrap.classList.add('hidden'); return; }
-    wrap.classList.remove('hidden');
+    const frase=document.getElementById('rec-hero-frase');
+    if(!despensa.length){
+      recetasSlider=[];
+      slider.innerHTML = '<div class="box col2" style="color:var(--mute)">Añade productos a tu despensa para ver recetas con lo que tienes.</div>';
+      if(frase) frase.textContent='Recetas';
+      return;
+    }
+    if(frase) frase.textContent='Recetas con lo que tienes';
     recetasSlider = construirRecetas();
     slider.innerHTML = recetasSlider.map((r,i)=>{
       const ingTxt = `${r.total} ${r.total===1?'ingrediente':'ingredientes'}`;
@@ -2581,11 +2822,10 @@
         <span class="rec-cta">Ver receta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
       </button>`;
     }).join('');
-    dots.innerHTML = recetasSlider.length>1 ? recetasSlider.map((_,i)=>`<button class="rec-dot${i===0?' on':''}" data-dot="${i}" aria-label="Receta ${i+1}"></button>`).join('') : '';
-    slider.scrollLeft = 0;
+    if(dots) dots.innerHTML='';
   }
-  function recetaActiva(){ const s=document.getElementById('receta-slider'); return s? Math.round(s.scrollLeft/(s.clientWidth+12)) : 0; }
-  function marcarPunto(i){ document.querySelectorAll('#receta-dots .rec-dot').forEach((d,j)=> d.classList.toggle('on', j===i)); }
+  function recetaActiva(){ return 0; }
+  function marcarPunto(i){}
   let _faltanActual = [];
   function abrirReceta(idx){
     const r = recetasSlider[idx]; if(!r) return;
@@ -2667,9 +2907,14 @@
     if(q('btn-desp-leave'))  q('btn-desp-leave').onclick=salirDespensaColab;
   }
   function mostrarVista(v){
-    const d=document.getElementById('view-despensa'), l=document.getElementById('view-lista');
-    if(v==='lista'){ d.classList.add('hidden'); l.classList.remove('hidden'); render(); pedirWakeLock(); }
-    else { l.classList.add('hidden'); d.classList.remove('hidden'); renderPantry(); actualizarReloj(); soltarWakeLock(); }
+    const vistas={ despensa:'view-despensa', lista:'view-lista', recetas:'view-recetas' };
+    Object.entries(vistas).forEach(([k,id])=>{ const el=document.getElementById(id); if(el) el.classList.toggle('hidden', k!==v); });
+    document.querySelectorAll('#tabs .tab').forEach(t=> t.classList.toggle('on', t.dataset.vista===v));
+    // mostrar el botón compartir solo en la vista lista
+    const sh=document.getElementById('open-share'); if(sh) sh.hidden = (v!=='lista');
+    if(v==='lista'){ render(); pedirWakeLock(); }
+    else if(v==='recetas'){ renderReceta(); soltarWakeLock(); }
+    else { renderPantry(); soltarWakeLock(); }
     try{ window.scrollTo(0,0); }catch(e){}
   }
   // Mantener la pantalla encendida mientras se compra (vista lista)
@@ -2770,7 +3015,7 @@
     const b=e.target.closest('[data-mkt]'); if(b) cambiarMarket(b.dataset.mkt);
   });
 
-  document.querySelector('#view-lista .wrap').addEventListener('click', e=>{
+  document.querySelector('#view-lista .bento').addEventListener('click', e=>{
     let t;
     if ((t=e.target.closest('[data-item]')))    { abrirItem(t.dataset.item); return; }
     if ((t=e.target.closest('[data-add]')))     { const r=sugActuales[+t.dataset.add]; if(r) añadirProducto(r.nombre,r.categoria,1); return; }
@@ -2781,7 +3026,7 @@
   });
   // Mantener pulsado el nombre de un producto → editar (nota/categoría)
   (function longPress(){
-    const wrap=document.querySelector('#view-lista .wrap'); let timer=null, longed=false, target=null;
+    const wrap=document.querySelector('#view-lista .bento'); let timer=null, longed=false, target=null;
     const start=e=>{ const el=e.target.closest('[data-longitem]'); if(!el) return; target=el; longed=false;
       timer=setTimeout(()=>{ longed=true; buzz(12); abrirItem(el.dataset.longitem); }, 480); };
     const cancel=()=>{ if(timer){ clearTimeout(timer); timer=null; } };
@@ -2834,7 +3079,6 @@
     document.getElementById('onb-go').addEventListener('click', cerrar);
   })();
 
-  document.getElementById('open-settings').addEventListener('click', abrirSheet);
   document.getElementById('open-share').addEventListener('click', compartirTexto);
   document.getElementById('btn-share-text').addEventListener('click', ()=>{ cerrarSheet(); setTimeout(compartirTexto,150); });
   document.getElementById('btn-share-link').addEventListener('click', compartirEnlace);
@@ -2844,6 +3088,14 @@
   document.getElementById('backdrop').addEventListener('click', closeSheet);
   document.getElementById('btn-export').addEventListener('click', exportar);
   document.getElementById('btn-import').addEventListener('click', ()=>document.getElementById('file-import').click());
+  document.getElementById('btn-demo').addEventListener('click', ()=>{
+    // Borra listas/despensa/historial locales y carga datos de prueba (no toca Firebase)
+    [K.items,K.compras,K.despensa,K.store,K.fijos].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+    sembrarDatos();
+    try{ localStorage.removeItem(CLAVE+'-demo-seed'); }catch(e){}
+    toastMsg('Datos de prueba cargados');
+    setTimeout(()=>location.reload(), 600);
+  });
   document.getElementById('file-import').addEventListener('change', e=>{ if(e.target.files[0]) importar(e.target.files[0]); e.target.value=''; });
 
   // Varias listas
@@ -2868,13 +3120,16 @@
   document.getElementById('fijo-inp').addEventListener('keydown', e=>{ if(e.key==='Enter'){ addFijo(e.target.value); e.target.value=''; } });
   document.getElementById('fijos-manage').addEventListener('click', e=>{ const t=e.target.closest('[data-delfijo]'); if(t) removeFijo(+t.dataset.delfijo); });
 
-  // Navegación entre vistas
-  document.getElementById('go-lista').addEventListener('click', ()=>mostrarVista('lista'));
-  document.getElementById('go-despensa').addEventListener('click', ()=>mostrarVista('despensa'));
+  // Navegación entre vistas · pestañas flotantes
+  document.getElementById('tabs').addEventListener('click', e=>{
+    const b=e.target.closest('[data-vista]'); if(!b) return;
+    buzz(6); mostrarVista(b.dataset.vista);
+  });
+  document.getElementById('go-recetas-box').addEventListener('click', ()=>{ buzz(6); mostrarVista('recetas'); });
   document.getElementById('go-settings').addEventListener('click', abrirSheet);
   // Tocar el logo: repite el trazo del check (pequeño guiño)
   (function logoTap(){
-    const m=document.querySelector('.hd-home .mark'); if(!m) return;
+    const m=document.querySelector('.hd-bento .mark'); if(!m) return;
     m.style.cursor='pointer';
     m.addEventListener('click', ()=>{ m.classList.remove('replay'); void m.offsetWidth; m.classList.add('replay'); buzz(6); });
   })();
@@ -2897,8 +3152,7 @@
     } else {
       toastMsg(total ? `Solo ${total} recetas con lo que tienes` : 'Añade productos para ver recetas');
     }
-  });  document.getElementById('receta-slider').addEventListener('scroll', ()=>{ marcarPunto(recetaActiva()); }, { passive:true });
-  document.getElementById('receta-dots').addEventListener('click', e=>{ const b=e.target.closest('[data-dot]'); if(!b) return; const s=document.getElementById('receta-slider'); s.scrollTo({ left:(+b.dataset.dot)*(s.clientWidth+12), behavior:'smooth' }); });
+  });
   document.getElementById('rec-close').addEventListener('click', closeSheet);
   document.getElementById('rec-add').addEventListener('click', recetaAddFaltan);
   // Selector de categoría
@@ -2917,15 +3171,14 @@
   document.getElementById('pantry-rows').addEventListener('click', e=>{
     let t;
     if((t=e.target.closest('[data-empadd]'))) { pedirDuracion(t.dataset.empadd); return; }
-    if((t=e.target.closest('[data-reponer]'))) { reponerYa(t.dataset.reponer); return; }
-    if((t=e.target.closest('[data-catd]')))    { abrirCategoria('despensa', t.dataset.catd); return; }
     if((t=e.target.closest('[data-pantoggle]'))) { despToggle(t.dataset.pantoggle); return; }
+    if((t=e.target.closest('[data-catd]')))    { abrirCategoria('despensa', t.dataset.catd); return; }
     if((t=e.target.closest('[data-delpan]')))    { removeDespensa(t.dataset.delpan); return; }
   });
   // ═══ MANIFEST (PWA) ═══
   try{
     const ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23ECFF00'/><path d='M40 82 L25 82 Q16 82 16 73 L16 53 Q16 44 23.15 38.54 L44.44 22.25 Q50 18 55.56 22.25 L76.85 38.54 Q84 44 84 53 L84 73 Q84 82 75 82 L60 82' fill='none' stroke='%23000000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/><path d='M35 57 L45 67 L66 42' fill='none' stroke='%23000000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/></svg>";
-    const mf = { name:'ladespensa', short_name:'ladespensa', start_url:'.', display:'standalone', background_color:'#F8F7F4', theme_color:'#F8F7F4',
+    const mf = { name:'ladespensa', short_name:'ladespensa', start_url:'.', display:'standalone', background_color:"#FBF9F3", theme_color:"#FBF9F3",
       icons:[{src:ICON,sizes:'any',type:'image/svg+xml',purpose:'any'},{src:ICON,sizes:'any',type:'image/svg+xml',purpose:'maskable'}] };
     const lnk=document.getElementById('mf');
     if(lnk) lnk.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));
