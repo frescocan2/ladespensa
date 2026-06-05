@@ -3,6 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
+  BUILD: v11-casi-hacibles · sellado 2026-06-04 19:32 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -447,6 +448,12 @@
     .rec-tip:empty{display:none;}
     .rec-tip b{font-weight:600;}
     .rec-basico{font-size:11px;color:var(--mute);background:var(--chip);padding:1px 7px;border-radius:var(--r-ctrl);margin-left:6px;font-weight:500;}
+    .rec-falta{font-size:12px;color:var(--danger);margin-top:6px;font-weight:600;}
+    .rec-card2.casi{border:1px dashed var(--line);}
+    .rec-ing-row.falta{color:var(--danger);}
+    .rec-ing-row.falta .rec-ing-dot{border-color:var(--danger);color:var(--danger);}
+    .rec-ing-row.falta .rec-ing-dot svg{width:10px;height:10px;}
+    .rec-falta-tag{font-size:11px;color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent);padding:1px 7px;border-radius:var(--r-ctrl);margin-left:6px;font-weight:600;}
     /* Personalidad */
     .pg-voz:empty{display:none;}
     .pg-voz:empty{display:none;}
@@ -2512,10 +2519,21 @@
   let recetaOffset = 0;                                          // avanza al pulsar "Otras"
   const REC_VISIBLES = 6;                                        // cuántas tarjetas muestra el slider
   let _hacCache = null;
-  function recetasHaciblesTodas(){                              // TODAS las 100% hacibles (cacheado)
+  function ingredientesQueFaltan(r){                            // ingredientes NO disponibles (ni en casa ni básicos)
+    return r.ing.filter(i => !disponible(i));
+  }
+  function recetasHaciblesTodas(){                              // 100% hacibles + casi hacibles (falta 1-2), cacheado
     if(_hacCache) return _hacCache;
-    _hacCache = RECETAS.filter(r => r.ing.every(disponible))
-      .map(r => ({ humor:false, n:r.n, t:r.t, r:r.r, ing:r.ing, pasos:r.pasos, tip:r.tip, total:r.ing.length }));
+    const hac=[], casi=[];
+    for(const r of RECETAS){
+      const faltan = ingredientesQueFaltan(r);
+      const base = { humor:false, n:r.n, t:r.t, r:r.r, ing:r.ing, pasos:r.pasos, tip:r.tip, total:r.ing.length, faltan };
+      if(faltan.length===0) hac.push(base);
+      else if(faltan.length<=2) casi.push(base);
+    }
+    // primero las completas, luego las que faltan 1, luego las que faltan 2
+    casi.sort((a,b)=>a.faltan.length-b.faltan.length);
+    _hacCache = hac.concat(casi);
     return _hacCache;
   }
   // Invalida las cachés cuando cambia la despensa (se llama desde donde se modifica)
@@ -2526,7 +2544,6 @@
     const h=new Date();
     const base=(h.getFullYear()*372 + h.getMonth()*31 + h.getDate());
     const off=((base + recetaOffset) % hac.length + hac.length) % hac.length;
-    // toma REC_VISIBLES de forma circular desde off
     const out=[];
     for(let k=0;k<REC_VISIBLES;k++){ out.push(hac[(off+k)%hac.length]); }
     return out;
@@ -2555,9 +2572,12 @@
     slider.innerHTML = recetasSlider.map((r,i)=>{
       const ingTxt = `${r.total} ${r.total===1?'ingrediente':'ingredientes'}`;
       const meta = r.humor ? r.pasos[0] : (r.t ? `${r.t} · ${ingTxt}` : ingTxt);
-      return `<button class="rec-card2${r.humor?' humor':''}" data-recidx="${i}">
+      const faltaTag = (!r.humor && r.faltan && r.faltan.length)
+        ? `<div class="rec-falta">Te falta: ${esc(r.faltan.join(', '))}</div>` : '';
+      return `<button class="rec-card2${r.humor?' humor':''}${(r.faltan&&r.faltan.length)?' casi':''}" data-recidx="${i}">
         <div class="rec-name">${esc(r.n)}</div>
         <div class="rec-meta">${esc(meta)}</div>
+        ${faltaTag}
         <span class="rec-cta">Ver receta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
       </button>`;
     }).join('');
@@ -2566,20 +2586,42 @@
   }
   function recetaActiva(){ const s=document.getElementById('receta-slider'); return s? Math.round(s.scrollLeft/(s.clientWidth+12)) : 0; }
   function marcarPunto(i){ document.querySelectorAll('#receta-dots .rec-dot').forEach((d,j)=> d.classList.toggle('on', j===i)); }
+  let _faltanActual = [];
   function abrirReceta(idx){
     const r = recetasSlider[idx]; if(!r) return;
     document.getElementById('rec-title').textContent=r.n;
     const nIng = (r.ing||[]).length;
     document.getElementById('rec-time').textContent = (r.r ? `${r.t} · ${r.r}` : r.t) || `${nIng} ${nIng===1?'ingrediente':'ingredientes'}`;
-    document.getElementById('rec-ing').innerHTML = (r.ing||[]).map(i=>
-      `<div class="rec-ing-row ok"><span class="rec-ing-dot">${SVG_CHECK}</span>${esc(i)}${(!r.humor && esBasico(i))?' <span class="rec-basico">básico</span>':''}</div>`
-    ).join('') || '<div class="rec-ing-row" style="color:var(--mute)">Nada de nada.</div>';
+    const faltan = new Set((r.faltan||[]).map(norm));
+    document.getElementById('rec-ing').innerHTML = (r.ing||[]).map(i=>{
+      const falta = faltan.has(norm(i));
+      return `<div class="rec-ing-row ${falta?'falta':'ok'}"><span class="rec-ing-dot">${falta?SVG_X_SM:SVG_CHECK}</span>${esc(i)}${(!r.humor && !falta && esBasico(i))?' <span class="rec-basico">básico</span>':''}${falta?' <span class="rec-falta-tag">te falta</span>':''}</div>`;
+    }).join('') || '<div class="rec-ing-row" style="color:var(--mute)">Nada de nada.</div>';
     document.getElementById('rec-pasos').innerHTML = r.pasos.map(p=>`<li>${esc(p)}</li>`).join('');
     document.getElementById('rec-tip').innerHTML = r.tip ? `<b>Truco:</b> ${esc(r.tip)}` : '';
-    document.getElementById('rec-add').style.display='none';
+    _faltanActual = r.faltan || [];
+    const addBtn=document.getElementById('rec-add');
+    if(_faltanActual.length){
+      addBtn.style.display='';
+      addBtn.textContent = _faltanActual.length===1 ? `Añadir ${_faltanActual[0]} a la lista` : `Añadir ${_faltanActual.length} ingredientes a la lista`;
+    } else {
+      addBtn.style.display='none';
+    }
     openSheet(document.getElementById('recetasheet'));
   }
-  function recetaAddFaltan(){ closeSheet(); }
+  function recetaAddFaltan(){
+    if(_faltanActual.length){
+      _faltanActual.forEach(nombre=>{
+        const nom=cap(nombre);
+        if(!items.some(i=>!i.comprado && norm(i.nombre)===norm(nom))){
+          añadirProducto(nom, detectarCategoria(nom), 1);
+        }
+      });
+      toastMsg(_faltanActual.length===1 ? `${cap(_faltanActual[0])} añadido a la lista` : `${_faltanActual.length} ingredientes añadidos`);
+      _faltanActual=[];
+    }
+    closeSheet();
+  }
 
   // ── Despensa compartida (sala propia, sincronización por ítem) ──
   function despColabSet(d){ if(despCollab.on && despCollab.ref) afterAuth(()=>{ try{ despCollab.ref.child(d.id).set(d); }catch(e){} }); }
@@ -2846,10 +2888,15 @@
   document.getElementById('rec-refresh').addEventListener('click', ()=>{
     const total = recetasHaciblesTodas().length;
     if(total > REC_VISIBLES){
-      // avanza una ventana completa, o al menos lo justo para que cambie con pools pequeños
-      const paso = total > REC_VISIBLES*2 ? REC_VISIBLES : Math.max(1, total - REC_VISIBLES);
-      recetaOffset += paso; haptic('ligero'); renderReceta();
-    } else { toastMsg('No hay más recetas con lo que tienes'); }
+      recetaOffset += REC_VISIBLES;
+      haptic('ligero');
+      renderReceta();
+      const tanda = (Math.floor(recetaOffset / REC_VISIBLES) % Math.ceil(total / REC_VISIBLES)) + 1;
+      const tandas = Math.ceil(total / REC_VISIBLES);
+      toastMsg(`Otras recetas · ${tanda}/${tandas}`);
+    } else {
+      toastMsg(total ? `Solo ${total} recetas con lo que tienes` : 'Añade productos para ver recetas');
+    }
   });  document.getElementById('receta-slider').addEventListener('scroll', ()=>{ marcarPunto(recetaActiva()); }, { passive:true });
   document.getElementById('receta-dots').addEventListener('click', e=>{ const b=e.target.closest('[data-dot]'); if(!b) return; const s=document.getElementById('receta-slider'); s.scrollTo({ left:(+b.dataset.dot)*(s.clientWidth+12), behavior:'smooth' }); });
   document.getElementById('rec-close').addEventListener('click', closeSheet);
