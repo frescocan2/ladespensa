@@ -3,7 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v33-glass-borde-brillo · sellado 2026-06-06 10:20 UTC
+  BUILD: v45-chips-despensa-sin-plano · sellado 2026-06-06 17:26 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -228,6 +228,11 @@
     .lrow-nm{font-size:16px;font-weight:400;letter-spacing:-0.022em;color:var(--ink);line-height:1.2;}
     .lrow-nota{font-size:13px;color:var(--mute);line-height:1.25;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .row.done .lrow-nm{color:var(--mute);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--mute) 50%,transparent);}
+    /* Estado "no estaba en el súper": tachado distinto (discontinuo, en tono apagado) */
+    .lrow.no-habia .lrow-nm{ color:var(--mute); text-decoration:line-through; text-decoration-style:dashed; text-decoration-color:var(--mute-2); }
+    .lrow.no-habia .check{ opacity:.4; }
+    .lrow-nohabia{ display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--mute); background:var(--chip); padding:1px 7px; border-radius:999px; margin-top:3px; }
+    .sheet-btn.on{ background:color-mix(in srgb, var(--accent) 22%, var(--card)); color:var(--ink); }
     .row-fg{position:relative;display:flex;align-items:center;gap:12px;min-height:40px;padding:4px 12px 4px 14px;background:var(--card);will-change:transform;}
     .row:not(:last-child) .row-fg::after{content:'';position:absolute;left:50px;right:0;bottom:0;height:0.5px;background:var(--line);}
 
@@ -581,6 +586,20 @@
     .bento #secciones{ display:flex; flex-direction:column; gap:10px; }
     .lista-box{ background:var(--card); border:1px solid var(--line); border-radius:22px; overflow:hidden; }
     .desp-box{ background:var(--card); border:1px solid var(--line); border-radius:22px; overflow:hidden; }
+    /* Chips de categoría desplegables en la despensa */
+    .desp-chip{ background:var(--card); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom:8px; }
+    .desp-chip:last-child{ margin-bottom:0; }
+    .desp-chip.reponer{ border-color:color-mix(in srgb, var(--danger) 38%, transparent); }
+    .desp-chip-sum{ list-style:none; display:flex; align-items:center; gap:9px; padding:13px 15px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .desp-chip-sum::-webkit-details-marker{ display:none; }
+    .desp-chip-dot{ width:11px; height:11px; border-radius:50%; background:var(--c); flex-shrink:0; }
+    .desp-chip-nm{ font-size:15px; font-weight:600; color:var(--ink); }
+    .desp-chip.reponer .desp-chip-nm{ color:var(--danger); }
+    .desp-chip-n{ font-size:12px; font-weight:700; color:var(--mute); background:var(--chip); min-width:20px; height:20px; border-radius:999px; display:grid; place-items:center; padding:0 6px; }
+    .desp-chip-chev{ margin-left:auto; width:18px; height:18px; color:var(--mute); transition:transform .25s; }
+    .desp-chip[open] .desp-chip-chev{ transform:rotate(180deg); }
+    .desp-chip-body{ border-top:1px solid var(--line); }
+    .desp-chip-body .pan-row:last-child{ border-bottom:none; }
     .desp-box .pan-row:last-child{ border-bottom:none; }
     /* Bloque plegable "Más opciones" */
     .mas{ border:1px solid var(--line); border-radius:22px; background:var(--card); overflow:hidden; }
@@ -782,7 +801,7 @@
   <span id="clock-date" hidden>—</span><span id="clock-time" hidden>—</span>
 
   <!-- ══════ DESPENSA ══════ -->
-  <div id="view-despensa" class="view">
+  <div id="view-despensa" class="view hidden">
     <div class="bento">
       <div class="box col2 hero-box" id="pantry-gauge">
         <p class="hero-frase" id="pg-voz">—</p>
@@ -843,7 +862,7 @@
   </div>
 
   <!-- ══════ LISTA ══════ -->
-  <div id="view-lista" class="view hidden">
+  <div id="view-lista" class="view">
     <div class="bento">
       <div class="box col2 hero-box list-pick-box lista-hero" id="lista-hero">
         <button class="list-pick big" id="open-lists">
@@ -945,8 +964,8 @@
   <!-- ══════ PESTAÑAS FLOTANTES ══════ -->
   <nav class="tabs" id="tabs">
     <span class="glass-rim" aria-hidden="true"></span>
-    <button class="tab on" data-vista="despensa">Despensa</button>
-    <button class="tab" data-vista="lista">Lista</button>
+    <button class="tab on" data-vista="lista">Lista</button>
+    <button class="tab" data-vista="despensa">Despensa</button>
     <button class="tab" data-vista="recetas">Recetas</button>
   </nav>
 </div>
@@ -992,13 +1011,9 @@
   </div>
 
   <div class="sheet-sec">
-    <div class="sheet-label">Editar en equipo · en tiempo real</div>
-    <div id="colab"></div>
-  </div>
-
-  <div class="sheet-sec">
-    <div class="sheet-label">Despensa en equipo · compártela en casa</div>
-    <div id="despcolab"></div>
+    <div class="sheet-label">Hogar compartido · despensa y lista en tiempo real</div>
+    <div id="hogar"></div>
+    <p class="priv-txt" style="margin-top:8px">Comparte tu hogar con quien vive contigo. La despensa y la lista de la compra se sincronizan para todos a la vez.</p>
   </div>
 
   <div class="sheet-sec">
@@ -1083,7 +1098,8 @@
   </div>
   <div class="sheet-label">Categoría</div>
   <div class="cat-grid" id="it-cats"></div>
-  <button class="sheet-btn danger" id="it-del" style="margin-top:14px">Eliminar de la lista</button>
+  <button class="sheet-btn" id="it-nohabia" style="margin-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg> <span id="it-nohabia-txt">No estaba en el súper</span></button>
+  <button class="sheet-btn danger" id="it-del" style="margin-top:10px">Eliminar de la lista</button>
 </div>
 
 <div class="sheet hidden" id="catsheet">
@@ -1126,7 +1142,7 @@
 <script>
   // ═══ CONFIGURACIÓN ═══
   const CLAVE = 'compra-inteligente-v1';
-  const VERSION = 'v33';   // ← versión visible en Ajustes (mantener en sync con el sello)
+  const VERSION = 'v45';   // ← versión visible en Ajustes (mantener en sync con el sello)
 
   // ═══ FIREBASE (rellena para activar la edición en equipo) ═══
   // Crea un proyecto gratis en console.firebase.google.com, añade Realtime Database
@@ -1422,17 +1438,46 @@
     catMem[norm(raw)] = cat; guardarCatMem();        // aprende la categoría del producto
     inp.value=''; catManual=false; cerrarAutocomp(); inp.focus(); buzz(8);
   }
+  // ¿Son el mismo producto? (por nombre normalizado o por sinónimo/canon)
+  function mismoProducto(a, b){
+    if(!a||!b) return false;
+    if(norm(a)===norm(b)) return true;
+    try{ return canon(a)===canon(b); }catch(e){ return false; }
+  }
+  // Al añadir a la LISTA, quita el equivalente de la DESPENSA (un único sitio para cada cosa)
+  function quitarDeDespensaEquivalente(nombre){
+    const antes = despensa.length;
+    const fuera = despensa.filter(d=>mismoProducto(d.nombre, nombre));
+    if(fuera.length){
+      despensa = despensa.filter(d=>!mismoProducto(d.nombre, nombre));
+      guardarDespensa(); fuera.forEach(d=>despColabRemove(d.id));
+    }
+    return antes - despensa.length;
+  }
+  // Al añadir a la DESPENSA, quita el equivalente de la LISTA
+  function quitarDeListaEquivalente(nombre){
+    const fuera = items.filter(i=>mismoProducto(i.nombre, nombre));
+    if(fuera.length){
+      items = items.filter(i=>!mismoProducto(i.nombre, nombre));
+      guardar(); fuera.forEach(i=>colabRemove && colabRemove(i.id));
+    }
+    return fuera.length;
+  }
   function añadirProducto(nombre, categoria, cantidad){
     const it = { id:uid(), nombre, categoria, cantidad:cantidad||1, comprado:false,
       creado:new Date().toISOString(), compradoEn:null, eventoId:null,
       addedBy: yo.nombre || '', checkedBy: '' };
-    items.push(it); guardar(); colabSet(it); render(); buzz(8);
+    items.push(it);
+    const quit = quitarDeDespensaEquivalente(nombre);   // si lo tenías en la despensa, sale de ahí
+    guardar(); colabSet(it); render(); buzz(8);
+    if(quit) toastMsg(`"${nombre}" pasa de tu despensa a la compra`);
   }
   function alternar(id){
     const it = items.find(i=>i.id===id); if(!it) return;
     const antesActivos = items.filter(i=>!i.comprado).length;
     it.comprado = !it.comprado;
     if (it.comprado){
+      it.noHabia = false;                                           // si lo compras, ya no es "no encontrado"
       it.compradoEn = new Date().toISOString();
       it.checkedBy = yo.nombre || '';
       const ev = { id:uid(), nombre:it.nombre, categoria:it.categoria, ts:it.compradoEn };
@@ -1546,12 +1591,13 @@
     const c = (mapaCat[it.categoria]||{color:'#aaa'}).color;
     const nota = notas[norm(it.nombre)] || '';
     return `
-      <div class="row swipe lrow" data-id="${it.id}" style="--c:${c}">
+      <div class="row swipe lrow${it.noHabia?' no-habia':''}" data-id="${it.id}" style="--c:${c}">
         <div class="row-del">Eliminar</div>
         <div class="row-fg lrow-fg">
           <button class="check" data-toggle="${it.id}" role="checkbox" aria-pressed="false" aria-label="Marcar ${esc(it.nombre)}">${SVG_CHECK}</button>
           <button class="lrow-name" data-toggle="${it.id}" data-longitem="${it.id}">
             <span class="lrow-nm">${esc(it.nombre)}</span>
+            ${it.noHabia?'<span class="lrow-nohabia">no estaba</span>':''}
             ${nota?`<span class="lrow-nota">${esc(nota)}</span>`:''}
           </button>
           <div class="qty">
@@ -1806,10 +1852,13 @@
     catch(e){ try{ if(navigator.share) await navigator.share({title:'Lista · ladespensa',url}); }catch(_){} }
   }
 
-  let pendingShared = null, pendingJoin = null, pendingDesp = null;
+  let pendingShared = null, pendingJoin = null, pendingDesp = null, pendingHogar = null;
   function leerEnlaceEntrante(){
     const hash = location.hash || '';
     history.replaceState(null,'',location.pathname+location.search);   // limpia el hash
+
+    const mh = hash.match(/hogar=([^&]+)/);
+    if(mh){ pendingHogar = decodeURIComponent(mh[1]).toUpperCase(); return; }
 
     const md = hash.match(/despensa=([^&]+)/);
     if(md){ pendingDesp = decodeURIComponent(md[1]).toUpperCase(); return; }
@@ -2019,7 +2068,52 @@
       return `<span class="pres-chip${mio?' yo':''}"><span class="pres-ini">${esc(n.slice(0,1).toUpperCase())}</span>${esc(mio?'Tú':n)}</span>`;
     }).join('');
   }
-  function actualizarColabUI(){ renderColabSection(); render(); }
+  function actualizarColabUI(){ renderColabSection(); try{ renderHogarSection(); }catch(e){} render(); }
+
+  // Sección unificada "Hogar compartido": un código para despensa + lista
+  function renderHogarSection(){
+    const el = document.getElementById('hogar'); if(!el) return;
+    if(!fbReady()){
+      el.innerHTML = `<div class="colab-note">El hogar compartido necesita un backend gratuito. Crea un proyecto en <b>Firebase</b>, activa <b>Realtime Database</b> y pega los datos en <b>FIREBASE_CONFIG</b> dentro del archivo.</div>`;
+      return;
+    }
+    const code = collab.on ? collab.room : (despRoom || null);
+    const activo = collab.on || !!despRoom;
+    if(activo){
+      el.innerHTML = `
+        <div class="colab-status"><span class="dot"></span>Hogar conectado · <b>${esc(code||'')}</b></div>
+        <div id="presencia" class="presencia"></div>
+        <div class="add" style="margin:4px 0 10px">
+          <input id="nombre-inp" type="text" maxlength="24" placeholder="Tu nombre" value="${esc(yo.nombre)}" />
+          <button id="nombre-save" class="plusbtn" aria-label="Guardar nombre">${SVG_CHECK}</button>
+        </div>
+        <button class="sheet-btn" id="btn-hogar-invite">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14V4M8.5 7.5 12 4l3.5 3.5"/><path d="M6 11v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/></svg>
+          Invitar a mi hogar
+        </button>
+        <button class="sheet-btn" id="btn-hogar-leave">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Salir del hogar
+        </button>`;
+    } else {
+      el.innerHTML = `
+        <button class="sheet-btn" id="btn-hogar-create">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+          Crear mi hogar
+        </button>
+        <button class="sheet-btn" id="btn-hogar-join">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+          Unirme a un hogar
+        </button>`;
+    }
+    const q=id=>document.getElementById(id);
+    if(q('btn-hogar-create')) q('btn-hogar-create').onclick=crearHogar;
+    if(q('btn-hogar-join'))   q('btn-hogar-join').onclick=()=>{ const c=(window.prompt('Código del hogar:')||'').trim().toUpperCase(); if(c){ cerrarSheet(); joinHogar(c); } };
+    if(q('btn-hogar-invite')) q('btn-hogar-invite').onclick=()=>compartirHogar(code);
+    if(q('btn-hogar-leave'))  q('btn-hogar-leave').onclick=salirHogar;
+    if(q('nombre-save'))      q('nombre-save').onclick=()=>{ const v=(q('nombre-inp').value||'').trim(); if(v){ yo.nombre=v; guardarNombre(); if(collab.presRef){ try{ collab.presRef.update({nombre:v, ts:Date.now()}); }catch(e){} } toastMsg('Nombre actualizado'); render(); } };
+    renderPresencia();
+  }
 
   // ═══ PANELES (genérico) ═══
   let sheetActual = null;
@@ -2053,7 +2147,7 @@
     if(sheetPrevFocus){ try{ sheetPrevFocus.focus({preventScroll:true}); }catch(e){} sheetPrevFocus=null; }
     setTimeout(()=>{ b.classList.add('hidden'); if(s) s.classList.add('hidden'); },320);
   }
-  function abrirSheet(){ renderTu(); pintarReorder(); renderColabSection(); renderDespColab(); renderNotif(); renderFijosManage(); openSheet(document.getElementById('sheet')); }
+  function abrirSheet(){ renderTu(); pintarReorder(); renderHogarSection(); renderNotif(); renderFijosManage(); openSheet(document.getElementById('sheet')); }
   function renderTu(){
     const el=document.getElementById('tu'); if(!el) return;
     const t=tonoActual();
@@ -2277,6 +2371,8 @@
     document.getElementById('it-cats').innerHTML = CATEGORIAS.map(c=>
       `<button class="cat-opt${c.id===it.categoria?' sel':''}" data-itcat="${c.id}" style="--c:${c.color}"><span class="cat-dot"></span>${esc(c.nombre)}</button>`
     ).join('');
+    const nh=document.getElementById('it-nohabia'), nht=document.getElementById('it-nohabia-txt');
+    if(nh){ nh.classList.toggle('on', !!it.noHabia); nht.textContent = it.noHabia ? 'Sí estaba (quitar marca)' : 'No estaba en el súper'; }
     openSheet(document.getElementById('itemsheet'));
   }
   function itemGuardarNota(){
@@ -2299,6 +2395,7 @@
     else { const nd = normDespItem({ nombre:it.nombre, categoria:it.categoria, dias:7, estimacion:7 }); despensa.push(nd); guardarDespensa(); despColabSet(nd); }
   }
 
+  let _despAbiertos = new Set();   // categorías con el chip desplegado en la despensa
   function renderPantry(){
     const cont=document.getElementById('pantry-rows'); if(!cont) return;
     tickDespensa();
@@ -2370,21 +2467,32 @@
     const btnFijos=document.getElementById('pantry-fromfijos'); if(btnFijos) btnFijos.hidden = !fijos.length;
     if(!despensa.length){ cont.innerHTML=`<div class="colab-note">Añade lo que sueles tener en casa. Al añadirlo te pregunto cuánto te dura; cuando se acabe el tiempo, lo paso solo a la compra. Con unos cuantos usos aprenderé tu ritmo.</div>
       <div class="empty-sugs"><button class="esug" data-empadd="Leche">+ Leche</button><button class="esug" data-empadd="Huevos">+ Huevos</button><button class="esug" data-empadd="Pan">+ Pan</button><button class="esug" data-empadd="Aceite">+ Aceite</button></div>`; return; }
-    // Orden único: primero TODO lo agotado (sin importar categoría), luego el resto agrupado por categoría
-    const ordenCat = {}; ORDENES.general.forEach((c,i)=>ordenCat[c]=i);
+    // Chips por categoría: cada uno se despliega al pulsar (varios a la vez). "Por reponer" en rojo.
     const urgencia = d => (d.dias||7)-diasDesde(d.abiertoEn);
-    const ordenados = despensa.slice().sort((a,b)=>{
-      const aAg = a.estado==='agotado' ? 0 : 1;
-      const bAg = b.estado==='agotado' ? 0 : 1;
-      if(aAg!==bAg) return aAg-bAg;                              // agotados arriba del todo
-      if(aAg===0) return urgencia(a)-urgencia(b);                // entre agotados, da igual; orden estable por urgencia
-      // los que están: agrupados por categoría, y dentro de cada una por lo que se acaba antes
-      const ca=ordenCat[a.categoria]??99, cb=ordenCat[b.categoria]??99;
-      if(ca!==cb) return ca-cb;
-      return urgencia(a)-urgencia(b);
-    });
-    const filas = ordenados.map(filaDespensa).join('');
-    cont.innerHTML = filas ? `<div class="desp-box">${filas}</div>` : '';
+    const agotadosArr = despensa.filter(d=>d.estado==='agotado').sort((a,b)=>urgencia(a)-urgencia(b));
+    let bloques = '';
+    const chip = (key, nombre, color, arr, reponer) => {
+      const abierto = _despAbiertos.has(key);
+      return `<details class="desp-chip${reponer?' reponer':''}" data-chip="${key}"${abierto?' open':''}>
+        <summary class="desp-chip-sum" style="--c:${color}">
+          <span class="desp-chip-dot"></span>
+          <span class="desp-chip-nm">${esc(nombre)}</span>
+          <span class="desp-chip-n">${arr.length}</span>
+          <svg class="desp-chip-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="desp-chip-body">${arr.map(filaDespensa).join('')}</div>
+      </details>`;
+    };
+    if(agotadosArr.length){
+      bloques += chip('__reponer__', 'Por reponer', 'var(--danger)', agotadosArr, true);
+    }
+    for (const catId of ORDENES.general){
+      const cat = mapaCat[catId]; if(!cat) continue;
+      const grupo = despensa.filter(d=>d.categoria===catId && d.estado!=='agotado').sort((a,b)=>urgencia(a)-urgencia(b));
+      if(!grupo.length) continue;
+      bloques += chip(catId, cat.nombre, cat.color, grupo, false);
+    }
+    cont.innerHTML = bloques;
     renderReceta();
   }
   function filaDespensa(d){
@@ -2454,7 +2562,10 @@
     const n=(nombre||'').trim(); if(!n) return;
     if(despensa.some(d=>norm(d.nombre)===norm(n))) return;
     const d=normDespItem({nombre:n, dias:dias||7, estimacion:dias||7});
-    despensa.push(d); guardarDespensa(); despColabSet(d); renderPantry();
+    despensa.push(d);
+    const quit = quitarDeListaEquivalente(n);   // si estaba en la compra, sale de la lista
+    guardarDespensa(); despColabSet(d); render();
+    if(quit) toastMsg(`"${n}" pasa de la compra a tu despensa`);
   }
   function removeDespensa(id){ const d=despensa.find(x=>x.id===id); despensa=despensa.filter(x=>x.id!==id); guardarDespensa(); if(d) despColabRemove(d.id); renderPantry(); }
   function despToggle(id){
@@ -3160,17 +3271,59 @@
         if(subir){ const map={}; despensa.forEach(d=>map[d.id]=d); despCollab.ref.set(map); }
         despCollab.cb=despCollab.ref.on('value',snap=>{
           const v=snap.val()||{}; despensa=Object.keys(v).map(k=>normDespItem(v[k]));
-          guardarDespensa(); renderPantry(); renderDespColab();
+          guardarDespensa(); renderPantry(); renderDespColab(); try{ renderHogarSection(); }catch(e){}
         });
       }catch(e){}
     });
-    renderDespColab();
+    renderDespColab(); try{ renderHogarSection(); }catch(e){}
     return true;
   }
   function crearDespensaColab(){ if(!fbReady()){ avisoFirebase(); return; } const room=codigoRoom(); despRoom=room; escribir(K.desproom,room); conectarDespensa(room,true); setTimeout(()=>compartirDespensa(room),150); }
   function unirseDespensaColab(){ if(!fbReady()){ avisoFirebase(); return; } const code=(window.prompt('Código de la despensa:')||'').trim().toUpperCase(); if(code) joinDespensa(code); }
   function joinDespensa(room){ if(!fbReady()){ avisoFirebase(); return; } despRoom=room; escribir(K.desproom,room); conectarDespensa(room,false); toastMsg('Despensa conectada · '+room); }
   function salirDespensaColab(){ despRoom=null; localStorage.removeItem(K.desproom); desconectarDespensa(); renderDespColab(); toastMsg('Has salido de la despensa en equipo'); }
+
+  // ── HOGAR COMPARTIDO: un único código conecta lista + despensa a la vez ──
+  // Crea un hogar: genera un código y conecta ambos sistemas con él.
+  function crearHogar(){
+    if(!fbReady()){ avisoFirebase(); return; }
+    asegurarNombre();
+    const code = codigoRoom();
+    // lista
+    la().room = code; guardar();
+    conectarRoom(code, true, activeId);
+    // despensa con el MISMO código
+    despRoom = code; escribir(K.desproom, code);
+    conectarDespensa(code, true);
+    cerrarSheet();
+    setTimeout(()=>compartirHogar(code), 150);
+    renderDespColab(); renderColabSection && renderColabSection();
+  }
+  // Une a un hogar existente: conecta ambos sistemas al mismo código.
+  function joinHogar(code){
+    if(!fbReady()){ avisoFirebase(); return; }
+    code = (code||'').trim().toUpperCase(); if(!code) return;
+    asegurarNombre();
+    // lista (reusa joinSala que crea la lista enlazada y conecta)
+    joinSala(code);
+    // despensa con el MISMO código (si no estaba ya conectada a él)
+    if(despRoom!==code){ despRoom=code; escribir(K.desproom,code); conectarDespensa(code,false); }
+    renderDespColab(); renderColabSection && renderColabSection();
+    toastMsg('Hogar conectado · '+code);
+  }
+  function salirHogar(){
+    la().room = null; guardar();                // suelta el código de la lista
+    desconectarColab();                          // desconecta la lista
+    despRoom=null; localStorage.removeItem(K.desproom); desconectarDespensa();   // sale de la despensa
+    actualizarColabUI && actualizarColabUI(); renderDespColab(); render();
+    toastMsg('Has salido del hogar compartido');
+  }
+  const enlaceHogar = code => location.origin + location.pathname + '#hogar=' + code;
+  async function compartirHogar(code){
+    const url = enlaceHogar(code);
+    const text = 'Comparte tu despensa y lista en ladespensa. Código: '+code;
+    try{ if(navigator.share) await navigator.share({title:'Hogar · ladespensa', text, url}); else { await navigator.clipboard.writeText(url); toastMsg('Invitación copiada'); } }catch(e){}
+  }
   const enlaceDespensa = room => location.origin+location.pathname+'#despensa='+room;
   async function compartirDespensa(room){ const url=enlaceDespensa(room); const text='Comparte la despensa en ladespensa. Código: '+room; try{ if(navigator.share) await navigator.share({title:'Despensa · ladespensa',text,url}); else { await navigator.clipboard.writeText(url); toastMsg('Invitación copiada'); } }catch(e){} }
   function renderDespColab(){
@@ -3524,6 +3677,12 @@
   document.getElementById('it-close').addEventListener('click', closeSheet);
   document.getElementById('it-nota-save').addEventListener('click', itemGuardarNota);
   document.getElementById('it-del').addEventListener('click', itemEliminar);
+  document.getElementById('it-nohabia').addEventListener('click', ()=>{
+    const it = items.find(x=>x.id===itemSel); if(!it) return;
+    it.noHabia = !it.noHabia;
+    guardar(); colabSet(it); render(); closeSheet();
+    toastMsg(it.noHabia ? `"${it.nombre}": marcado como no encontrado` : `"${it.nombre}": marca quitada`);
+  });
   document.getElementById('it-cats').addEventListener('click', e=>{ const t=e.target.closest('[data-itcat]'); if(t) itemCategoria(t.dataset.itcat); });
   // Selector de duración
   document.getElementById('dur-close').addEventListener('click', ()=>{ pendienteDur=null; closeSheet(); });
@@ -3537,6 +3696,11 @@
     if((t=e.target.closest('[data-catd]')))    { abrirCategoria('despensa', t.dataset.catd); return; }
     if((t=e.target.closest('[data-delpan]')))    { removeDespensa(t.dataset.delpan); return; }
   });
+  // Recordar qué chips de la despensa están abiertos (el evento toggle no burbujea → captura)
+  document.getElementById('pantry-rows').addEventListener('toggle', e=>{
+    const d=e.target; if(!d || !d.dataset || !d.dataset.chip) return;
+    if(d.open) _despAbiertos.add(d.dataset.chip); else _despAbiertos.delete(d.dataset.chip);
+  }, true);
   // ═══ MANIFEST (PWA) ═══
   try{
     const ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FFD60A'/><path d='M44.60 67.28 L36.50 67.28 Q31.64 67.28 31.64 62.42 L31.64 51.62 Q31.64 46.76 35.50 43.81 L47.00 35.02 Q50.00 32.72 53.00 35.02 L64.50 43.81 Q68.36 46.76 68.36 51.62 L68.36 62.42 Q68.36 67.28 63.50 67.28 L55.40 67.28' fill='none' stroke='%23000000' stroke-width='4.3' stroke-linecap='round' stroke-linejoin='round'/><path d='M41.90 53.78 L47.30 59.18 L58.64 45.68' fill='none' stroke='%23000000' stroke-width='4.3' stroke-linecap='round' stroke-linejoin='round'/></svg>";
@@ -3573,12 +3737,16 @@
   actualizarReloj(); setInterval(actualizarReloj, 15000);
   setInterval(()=>{ renderPantry(); }, 60000);                  // revisa temporizadores cada minuto
   leerEnlaceEntrante();
-  if (!pendingJoin && fbReady() && la().room){ conectarRoom(la().room, false, activeId); }
-  if (fbReady()){
-    if (pendingDesp) joinDespensa(pendingDesp);
-    else if (despRoom) conectarDespensa(despRoom, false);
+  if (pendingHogar && fbReady()){
+    joinHogar(pendingHogar); pendingHogar=null;
+  } else {
+    if (!pendingJoin && fbReady() && la().room){ conectarRoom(la().room, false, activeId); }
+    if (fbReady()){
+      if (pendingDesp) joinDespensa(pendingDesp);
+      else if (despRoom) conectarDespensa(despRoom, false);
+    }
   }
-  mostrarVista((pendingShared || pendingJoin) ? 'lista' : 'despensa');
+  mostrarVista('lista');
 </script>
 </body>
 </html>
