@@ -3,7 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v12-bento · sellado 2026-06-05 18:26 UTC
+  BUILD: v20-buscador-despensa-favicon · sellado 2026-06-06 06:55 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -16,8 +16,8 @@
   <meta name="apple-mobile-web-app-title" content="ladespensa" />
   <title>ladespensa</title>
 
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23ECFF00'/><path d='M40 82 L25 82 Q16 82 16 73 L16 53 Q16 44 23.15 38.54 L44.44 22.25 Q50 18 55.56 22.25 L76.85 38.54 Q84 44 84 53 L84 73 Q84 82 75 82 L60 82' fill='none' stroke='%23000000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/><path d='M35 57 L45 67 L66 42' fill='none' stroke='%23000000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23ECFF00'/><path d='M40 82 L25 82 Q16 82 16 73 L16 53 Q16 44 23.15 38.54 L44.44 22.25 Q50 18 55.56 22.25 L76.85 38.54 Q84 44 84 53 L84 73 Q84 82 75 82 L60 82' fill='none' stroke='%23000000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/><path d='M35 57 L45 67 L66 42' fill='none' stroke='%23000000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23FFD60A'/><path d='M44.60 67.28 L36.50 67.28 Q31.64 67.28 31.64 62.42 L31.64 51.62 Q31.64 46.76 35.50 43.81 L47.00 35.02 Q50.00 32.72 53.00 35.02 L64.50 43.81 Q68.36 46.76 68.36 51.62 L68.36 62.42 Q68.36 67.28 63.50 67.28 L55.40 67.28' fill='none' stroke='%23000000' stroke-width='4.3' stroke-linecap='round' stroke-linejoin='round'/><path d='M41.90 53.78 L47.30 59.18 L58.64 45.68' fill='none' stroke='%23000000' stroke-width='4.3' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23FFD60A'/><path d='M44.60 67.28 L36.50 67.28 Q31.64 67.28 31.64 62.42 L31.64 51.62 Q31.64 46.76 35.50 43.81 L47.00 35.02 Q50.00 32.72 53.00 35.02 L64.50 43.81 Q68.36 46.76 68.36 51.62 L68.36 62.42 Q68.36 67.28 63.50 67.28 L55.40 67.28' fill='none' stroke='%23000000' stroke-width='4.3' stroke-linecap='round' stroke-linejoin='round'/><path d='M41.90 53.78 L47.30 59.18 L58.64 45.68' fill='none' stroke='%23000000' stroke-width='4.3' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
   <link rel="manifest" id="mf" />
 
   <!-- Firebase (opcional, para edición colaborativa). Si no se configura, la app funciona en local. -->
@@ -28,8 +28,8 @@
   <style>
     /* ═══ TOKENS ═══ */
     :root {
-      --bg:#FBF9F3; --card:#FFFFFF; --ink:#1C1C1E; --mute:#8E8E93;
-      --ink-soft:rgba(28,28,30,0.62); --mute-2:rgba(60,60,67,0.45);
+      --bg:#FBF9F3; --card:#FFFFFF; --ink:#1C1C1E; --mute:#6E6E73;
+      --ink-soft:rgba(28,28,30,0.72); --mute-2:rgba(60,60,67,0.58);
       --line:rgba(60,60,67,0.13); --chip:rgba(120,120,128,0.10); --press:rgba(120,120,128,0.16);
       --danger:#FF3B30;
       /* Acento de marca: amarillo dorado de iOS Notes */
@@ -305,7 +305,9 @@
     .sheet-btn[hidden]{display:none;}
     .sheet-btn:active{background:var(--press);}
     .sheet-btn.danger{justify-content:center;color:var(--danger);font-weight:600;}
+    .sheet-btn.danger svg{color:var(--danger);}
     .sheet-btn svg{width:20px;height:20px;color:var(--mute);}
+    .priv-txt{font-size:13px;line-height:1.55;color:var(--mute);margin:0 2px 10px;}
     .colab-note{font-size:13px;line-height:1.5;color:var(--mute);background:var(--card);border-radius:var(--r-card);padding:14px 16px;box-shadow:var(--elev-1);}
     .colab-note b{color:var(--ink);font-weight:600;}
     .empty-sugs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
@@ -579,16 +581,42 @@
     .rec-head-box{ display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
     .rec-head-box .hero-frase{ font-size:26px; }
     .rec-head-box .rec-refresh{ flex-shrink:0; }
+    /* Buscador de recetas */
+    .rec-search-box,.desp-search-box{ padding:6px; }
+    .rec-search-box .add,.desp-search-box .add{ margin:0; display:flex; align-items:center; gap:8px; padding:0 6px; }
+    .rec-search-ic{ color:var(--mute); display:grid; place-items:center; flex-shrink:0; }
+    .rec-search-ic svg{ width:20px; height:20px; }
+    .rec-search-box input,.desp-search-box input{ flex:1; border:none; background:transparent; font:inherit; font-size:16px; color:var(--ink); padding:13px 0; outline:none; }
+    .rec-search-box input::placeholder,.desp-search-box input::placeholder{ color:var(--mute); }
+    .rec-search-clear{ border:none; background:var(--chip); color:var(--ink-soft); width:28px; height:28px; border-radius:var(--r-full); display:grid; place-items:center; cursor:pointer; flex-shrink:0; }
+    .rec-search-clear svg{ width:15px; height:15px; }
+    .rec-vacio{ color:var(--mute); font-size:15px; line-height:1.4; }
+    /* Favoritos */
+    .rec-head-acts{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    .rec-favtoggle{ width:38px; height:38px; border-radius:var(--r-full); border:none; background:var(--chip); color:var(--ink-soft); display:grid; place-items:center; cursor:pointer; }
+    .rec-favtoggle svg{ width:18px; height:18px; }
+    .rec-favtoggle.on{ background:var(--accent); color:var(--ink); }
+    .rec-favtoggle.on svg{ fill:var(--ink); }
+    .rec-h-acts{ display:flex; align-items:center; gap:10px; }
+    .rec-fav-btn{ border:none; background:transparent; color:var(--mute); cursor:pointer; padding:2px; display:grid; place-items:center; }
+    .rec-fav-btn svg{ width:24px; height:24px; transition:transform .15s; }
+    .rec-fav-btn:active svg{ transform:scale(.85); }
+    .rec-fav-btn.on{ color:var(--accent); }
+    .rec-fav-btn.on svg{ fill:var(--accent); }
     .rec-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .rec-grid .rec-card2{ background:var(--card); border:1px solid var(--line); border-radius:22px; padding:18px; display:flex; flex-direction:column; min-height:130px; cursor:pointer; text-align:left; font:inherit; color:var(--ink); }
+    .rec-grid .rec-card2{ position:relative; background:var(--card); border:1px solid var(--line); border-radius:22px; padding:18px; display:flex; flex-direction:column; min-height:130px; cursor:pointer; text-align:left; font:inherit; color:var(--ink); }
     .rec-grid .rec-card2:active{ background:var(--press); }
     .rec-grid .rec-card2.casi{ border-style:dashed; }
-    .rec-grid .rec-card2 .rec-name{ font-size:19px; font-weight:600; letter-spacing:-0.02em; line-height:1.14; }
+    .rec-grid .rec-card2 .rec-name{ font-size:19px; font-weight:600; letter-spacing:-0.02em; line-height:1.14; padding-right:34px; }
     .rec-grid .rec-card2 .rec-meta{ font-size:13px; color:var(--mute); margin-top:5px; }
     .rec-grid .rec-card2 .rec-falta{ font-size:12px; color:var(--danger); font-weight:600; margin-top:8px; }
     .rec-grid .rec-card2 .rec-cta{ margin-top:auto; padding-top:12px; display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:600; }
     .rec-grid .rec-card2.humor{ background:var(--chip); border-style:dashed; }
     .rec-grid .rec-card2.humor .rec-meta{ color:var(--ink-soft); }
+    /* Círculo con bandera del país (dibujada), esquina superior derecha con offset del radio del bento */
+    .rec-flag{ position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; box-shadow:0 1px 4px rgba(0,0,0,.18); overflow:hidden; padding:2px; background:var(--card); }
+    .rec-flag-img{ display:block; width:100%; height:100%; border-radius:50%; }
+    .rec-grid .rec-card2:first-child:not(.humor) .rec-flag{ background:rgba(255,255,255,.85); }
     /* primera receta destacada en flúo */
     .rec-grid .rec-card2:first-child:not(.humor){ background:var(--accent); border-color:transparent; grid-column:span 2; }
     .rec-grid .rec-card2:first-child .rec-falta{ color:#9a3412; }
@@ -695,6 +723,14 @@
         <p class="hero-frase" id="pg-voz">—</p>
         <span id="hero-resumen" hidden></span><span id="hero-bar-fill" hidden></span><span id="hero-bar-falta" hidden></span>
         <span id="pantry-pct" hidden>—</span><span id="pantry-lbl" hidden></span>
+      </div>
+
+      <div class="box col2 add-box desp-search-box" id="desp-search-box">
+        <div class="add">
+          <span class="rec-search-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg></span>
+          <input id="desp-buscar" type="text" autocomplete="off" maxlength="40" placeholder="Buscar en tu despensa…" />
+          <button id="desp-buscar-x" class="rec-search-clear hidden" aria-label="Borrar búsqueda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
       </div>
 
       <div class="box col2 atencion-box" id="atencion-box">
@@ -821,10 +857,20 @@
     <div class="bento">
       <div class="box col2 hero-box rec-head-box">
         <p class="hero-frase" id="rec-hero-frase">Recetas con lo que tienes</p>
-        <button class="rec-refresh" id="rec-refresh" aria-label="Otras recetas">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
-          Otras
-        </button>
+        <div class="rec-head-acts">
+          <button class="rec-favtoggle" id="rec-favtoggle" aria-label="Ver favoritas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.3l-5.4 3 1-6-4.3-4.2 6-.9L12 4l2.7 5.2 6 .9-4.3 4.2 1 6z"/></svg></button>
+          <button class="rec-refresh" id="rec-refresh" aria-label="Otras recetas">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+            Otras
+          </button>
+        </div>
+      </div>
+      <div class="box col2 add-box rec-search-box">
+        <div class="add">
+          <span class="rec-search-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg></span>
+          <input id="rec-buscar" type="text" autocomplete="off" maxlength="40" placeholder="Busca receta o ingrediente…" />
+          <button id="rec-buscar-x" class="rec-search-clear hidden" aria-label="Borrar búsqueda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
       </div>
       <div class="rec-grid col2" id="receta-slider"></div>
       <div class="rec-dots col2" id="receta-dots" hidden></div>
@@ -935,11 +981,20 @@
       Cargar datos de prueba
     </button>
   </div>
+
+  <div class="sheet-sec">
+    <div class="sheet-label">Privacidad</div>
+    <p class="priv-txt">Tus listas y tu despensa se guardan en este dispositivo. Si compartes una lista o despensa con código, esos datos se sincronizan en la nube (Firebase) para que tú y quien comparta los veáis. No vendemos tus datos ni mostramos anuncios.</p>
+    <button class="sheet-btn danger" id="btn-borrar-todo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/></svg>
+      Borrar todos mis datos
+    </button>
+  </div>
 </div>
 
 <div class="sheet hidden" id="recetasheet">
   <div class="sheet-handle"></div>
-  <div class="sheet-h"><span id="rec-title">Receta</span><button class="txtbtn" id="rec-close">Cerrar</button></div>
+  <div class="sheet-h"><span id="rec-title">Receta</span><div class="rec-h-acts"><button class="rec-fav-btn" id="rec-fav" aria-label="Guardar en favoritas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.3l-5.4 3 1-6-4.3-4.2 6-.9L12 4l2.7 5.2 6 .9-4.3 4.2 1 6z"/></svg></button><button class="txtbtn" id="rec-close">Cerrar</button></div></div>
   <div class="rec-time" id="rec-time"></div>
   <div class="sheet-label">Ingredientes</div>
   <div id="rec-ing"></div>
@@ -1080,7 +1135,7 @@
     items:CLAVE, store:CLAVE+'-store', compras:CLAVE+'-compras', market:CLAVE+'-market',
     catmem:CLAVE+'-catmem', mitienda:CLAVE+'-mitienda', snooze:CLAVE+'-snooze',
     fijos:CLAVE+'-fijos', despensa:CLAVE+'-despensa', desproom:CLAVE+'-desproom', notif:CLAVE+'-notif', uid:CLAVE+'-uid', nombre:CLAVE+'-nombre', ver:CLAVE+'-ver',
-    tono:CLAVE+'-tono', notas:CLAVE+'-notas', caduca:CLAVE+'-caduca', inst:CLAVE+'-inst',
+    tono:CLAVE+'-tono', notas:CLAVE+'-notas', caduca:CLAVE+'-caduca', inst:CLAVE+'-inst', favs:CLAVE+'-favs',
   };
   const leer = (k,def) => { try{ const d=JSON.parse(localStorage.getItem(k)); return d==null?def:d; }catch(e){ return def; } };
   const escribir = (k,v) => { try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} };
@@ -1095,6 +1150,16 @@
   let snoozed  = leer(K.snooze,{})   || {};
   let fijos    = Array.isArray(leer(K.fijos,[])) ? leer(K.fijos,[]) : [];
   let despensa = Array.isArray(leer(K.despensa,[])) ? leer(K.despensa,[]) : [];
+  let favoritos = Array.isArray(leer(K.favs,[])) ? leer(K.favs,[]) : [];   // nombres de recetas favoritas
+  let despQuery = '';                                                       // texto del buscador de despensa
+  const esFav = n => favoritos.includes(n);
+  function toggleFav(n){
+    if(!n) return;
+    const i = favoritos.indexOf(n);
+    if(i>=0){ favoritos.splice(i,1); toastMsg('Quitada de favoritas'); }
+    else { favoritos.push(n); toastMsg(pickV(['Guardada en favoritas ⭐','A favoritas. Buen ojo 👀','Guardada. Esa repite seguro 😋'])); }
+    escribir(K.favs, favoritos); haptic('tap');
+  }
   let despRoom = leer(K.desproom, null);
   const despCollab = { on:false, ref:null, cb:null };
   let notifOn = leer(K.notif, false) === true;
@@ -1165,15 +1230,15 @@
         carino:[`Hay ${acab} cosa${acab>1?'s':''} que conviene usar pronto. Aún estás a tiempo.`] })[t];
     } else if(p>=80){
       pool = ({ seco:['Despensa bien surtida.','Todo en orden.'],
-        guasa:[`${hola}. Despensa a tope: hoy no hay excusa para pedir pizza.`, 'Despensa de búnker. Sobrevivirías a un finde lluvioso sin pestañear.', `${hola}. Pareces alguien con la vida resuelta, fíjate tú.`, 'Esto es un supermercado en miniatura. Chapó.', `${hola}. Con esta despensa podrías dar de comer al vecindario.`, 'Nivel ardilla previsora: máximo. Bien ahí.', `${hola}. Tan llena que asusta. ¿Esperas el apocalipsis?`, 'Despensa de matrícula de honor. Que se enteren en casa.', `${hola}. Si Mercadona te viera, lloraría de orgullo.`],
+        guasa:[`${hola}. Despensa a tope: hoy no hay excusa para pedir pizza.`, 'Despensa de búnker. Sobrevivirías a un finde lluvioso sin pestañear.', `${hola}. Pareces alguien con la vida resuelta, fíjate tú.`, 'Esto es un supermercado en miniatura. Chapó.', `${hola}. Con esta despensa podrías dar de comer al vecindario.`, 'Nivel ardilla previsora: máximo. Bien ahí.', `${hola}. Tan llena que asusta. ¿Esperas el apocalipsis?`, '"El imperio contraataca": tu despensa no se rinde.', '"Misión cumplida": nevera llena, conciencia tranquila.', `${hola}. Más surtido que el carro de un domingo con hambre.`, '"Toy Story": hay comida hasta el infinito y más allá.'],
         carino:[`${hola}. Tienes la despensa llenita, qué gusto.`, 'Todo en su sitio y bien fresco. Da gusto.'] })[t];
     } else if(p>=45){
       pool = ({ seco:['Despensa a medias.','Vas tirando.'],
-        guasa:[`${hola}. Ni rico ni pobre: en ese limbo de "ya iré mañana al súper".`, 'La despensa aguanta, pero no te flipes, campeón.', `${hola}. Media despensa, media vida. Filosofía pura.`, 'Ni fu ni fa. La despensa está en modo "bueno, se puede improvisar algo".', `${hola}. Vas tirando, como todos un miércoles.`, 'A medio gas. Como tu motivación después de comer.'],
+        guasa:[`${hola}. Ni rico ni pobre: en ese limbo de "ya iré mañana al súper".`, 'La despensa aguanta, pero no te flipes, campeón.', `${hola}. Media despensa, media vida. Filosofía pura.`, 'Ni fu ni fa. La despensa está en modo "bueno, se puede improvisar algo".', `${hola}. Vas tirando, como todos un miércoles.`, '"Una historia a medias": tu despensa, ni llena ni vacía.', 'A medio gas, como el wifi del vecino.', '"Náufrago": tienes lo justo para sobrevivir. De momento.'],
         carino:[`${hola}. Vas bien, la despensa aguanta.`, 'Ni mucho ni poco; de momento, tranquilidad.'] })[t];
     } else {
       pool = ({ seco:['Despensa baja, conviene reponer.'],
-        guasa:['Esto pinta a cena de "lo que haya por ahí suelto". Toca compra.', 'La nevera empieza a hacer eco. ¡Al súper!', 'La despensa está a régimen sin haberlo pedido. A reponer.', 'Como no bajes al súper, hoy cenas creatividad con sal.', 'Quedan cuatro cosas y mal contadas. Espabila.', 'Esto ya no es minimalismo, es hambre programada.'],
+        guasa:['Esto pinta a cena de "lo que haya por ahí suelto". Toca compra.', 'La nevera empieza a hacer eco. ¡Al súper!', 'La despensa está a régimen sin haberlo pedido. A reponer.', 'Como no bajes al súper, hoy cenas creatividad con sal.', 'Quedan cuatro cosas y mal contadas. Espabila.', '"Mad Max": páramo desértico en tu nevera. Al súper.', '"Juegos del hambre", literal. Que empiecen los... recados.', 'La despensa pide "Sal-ven al soldado" (de la compra).'],
         carino:['Se va vaciando; igual toca una vueltecita al súper.'] })[t];
     }
     const r=diasRacha();
@@ -1593,12 +1658,13 @@
       desp('Detergente','limpieza',40,10),
     ];
     escribir(K.items,itemsMock); escribir(K.compras,comprasMock); escribir(K.despensa,despMock);
+    escribir(K.favs,['Spaghetti alla carbonara','Tiramisù']);
   }
 
   // ═══ COPIA DE SEGURIDAD ═══
   function exportar(){
     const data = { app:'ladespensa', v:3, fecha:new Date().toISOString(),
-      store, compras, market, catMem, miTienda, snoozed, fijos, despensa, desproom:despRoom, nombre:yo.nombre };
+      store, compras, market, catMem, miTienda, snoozed, fijos, despensa, desproom:despRoom, nombre:yo.nombre, favs:favoritos };
     const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href=url; a.download='ladespensa-backup.json'; document.body.appendChild(a); a.click(); a.remove();
@@ -1627,6 +1693,7 @@
         if (d.snoozed && typeof d.snoozed==='object') { snoozed=d.snoozed; guardarSnooze(); }
         if (Array.isArray(d.fijos)) { fijos=d.fijos; guardarFijos(); }
         if (Array.isArray(d.despensa)) { despensa=d.despensa.map(normDespItem); guardarDespensa(); }
+        if (Array.isArray(d.favs)) { favoritos=d.favs; escribir(K.favs, favoritos); }
         if (typeof d.nombre==='string' && d.nombre) { yo.nombre=d.nombre; guardarNombre(); }
         if (d.desproom){ despRoom=d.desproom; escribir(K.desproom, despRoom); }
         renderListBar(); renderSeg(); renderChips(); pintarReorder(); render(); renderPantry(); cerrarSheet();
@@ -2215,10 +2282,10 @@
     const gT=document.getElementById('guino-txt'), gE=document.getElementById('guino-emoji');
     if(gT){
       let frases;
-      if(agotados>0) frases=[['🛒','Algo ha caído en combate. Ya descansa en la lista.'],['📝','Lista al rescate: toca repoblar la nevera.'],['🤷','Bueno, ya estaba viejo. A por otro.'],['🪦','Aquí yace un producto. Que la tierra le sea leve (y barata).'],['🚨','Alerta nevera: faltan refuerzos. Al súper, soldado.'],['😅','Se acabó. Como tu fuerza de voluntad con el chocolate.']];
-      else if(porAcabar>0) frases=[['⏳','Esto tiene los días contados. Tú decides su destino.'],['👀','Ojo, que algo se te va de las manos (literalmente).'],['🍳','Momento MasterChef: improvisa antes de que caduque.'],['🏃','Corre, que se te escapa la frescura.'],['⏰','Tic-tac. Esto no se va a comer solo, ¿eh?']];
-      else if(despensa.length===0) frases=[['🌱','Despensa en blanco. Como tu lista de propósitos.'],['🛍️','Más vacía que el metro un domingo a las 7am.'],['👻','Aquí no hay nada. Ni fantasmas, que se aburren.'],['🍽️','Plato vacío, nevera vacía. Toca expedición al súper.']];
-      else frases=[['💪','Despensa de revista. Que tiemble tu suegra.'],['🏆','Lo tienes todo. Hasta da rabia.'],['😌','Hoy no hay drama en la cocina. Disfrútalo.'],['🐿️','Nivel ardilla preparando el invierno: experto.'],['🦁','Rey de la selva… de los congelados.'],['🤓','Mira el listo, con la despensa cuadrada y todo.'],['🍀','Tan llena que da hasta suerte. No la gastes en pizza.']];
+      if(agotados>0) frases=[['🛒','Algo ha caído en combate. Ya descansa en la lista.'],['📝','Lista al rescate: toca repoblar la nevera.'],['🪦','Aquí yace un producto. Que la tierra le sea leve (y barata).'],['🚨','Alerta nevera: faltan refuerzos. Al súper, soldado.'],['🎬','"Lo que el viento se llevó"… de tu despensa. A reponer.'],['🍝','Houston, tenemos un problema: se acabó lo bueno.'],['😅','Se acabó. Como mi dieta cada domingo.'],['🕵️','Misión: encontrar lo que falta. Imposible sin ir al súper.']];
+      else if(porAcabar>0) frases=[['⏳','Esto tiene los días contados. Tú decides su destino.'],['🍳','Momento MasterChef: improvisa antes de que caduque.'],['⏰','Tic-tac. Esto no se va a comer solo, ¿eh?'],['🎬','"Rápido y furioso": cómetelo antes de que se ponga malo.'],['🥑','El tiempo vuela, y el aguacate también madura. Aprovecha.'],['🏃','"Atrapa la bandera"… digo, el tomate, antes de que se vaya.'],['👀','Ojo al dato: hay comida pidiendo guerra.']];
+      else if(despensa.length===0) frases=[['🌱','Despensa en blanco. Como tu lista de propósitos.'],['🛍️','Más vacía que el metro un domingo a las 7am.'],['👻','"Los otros": aquí no hay nadie. Ni comida.'],['🍽️','Plato vacío, nevera vacía. Toca expedición al súper.'],['🎬','"El día después de mañana"… sin comida en casa. Apocalíptico.'],['🐀','Ni Ratatouille cocinaría algo aquí. Al súper.']];
+      else frases=[['💪','Despensa de revista. Que tiemble tu suegra.'],['🏆','Lo tienes todo. Hasta da rabia.'],['🐿️','Nivel ardilla preparando el invierno: experto.'],['🦁','"El rey león"… de los congelados.'],['🍅','"Tomates verdes fritos", pero con la despensa llena.'],['🍝','"Comer, rezar, amar": empieza por comer, que tienes de todo.'],['🤌','Tienes de todo. Mamma mia che dispensa!'],['🧙','"El señor de los anillos"… de cebolla. Todo en orden.'],['😎','Despensa nivel jefe final. A cocinar.']];
       const pick=frases[Math.floor(Math.random()*frases.length)];
       gE.textContent=pick[0]; gT.textContent=pick[1];
     }
@@ -2236,14 +2303,22 @@
     if(!despensa.length){ cont.innerHTML=`<div class="colab-note">Añade lo que sueles tener en casa. Al añadirlo te pregunto cuánto te dura; cuando se acabe el tiempo, lo paso solo a la compra. Con unos cuantos usos aprenderé tu ritmo.</div>
       <div class="empty-sugs"><button class="esug" data-empadd="Leche">+ Leche</button><button class="esug" data-empadd="Huevos">+ Huevos</button><button class="esug" data-empadd="Pan">+ Pan</button><button class="esug" data-empadd="Aceite">+ Aceite</button></div>`; return; }
     const key=d=> d.estado==='agotado' ? -1 : ((d.dias||7)-diasDesde(d.abiertoEn));
+    const dq = norm(despQuery);
+    const coincide = d => !dq || norm(d.nombre).includes(dq) || canon(d.nombre)===canon(despQuery);
     let filas='';
+    let totalFiltrado=0;
     for (const catId of ORDENES.general){                        // agrupado por categoría (sin cabecera)
       const cat = mapaCat[catId]; if(!cat) continue;
-      const grupo = despensa.filter(d=>d.categoria===catId).sort((a,b)=>key(a)-key(b));
+      const grupo = despensa.filter(d=>d.categoria===catId && coincide(d)).sort((a,b)=>key(a)-key(b));
       if(!grupo.length) continue;
+      totalFiltrado += grupo.length;
       filas += grupo.map(filaDespensa).join('');
     }
-    cont.innerHTML = filas ? `<div class="desp-box">${filas}</div>` : '';
+    if(dq && !totalFiltrado){
+      cont.innerHTML = `<div class="colab-note">${pickV(['Eso no está en tu despensa. ¿Lo añadimos? 👀','Ni rastro de eso por aquí.','No lo tienes. Aún. 😏'])}</div>`;
+    } else {
+      cont.innerHTML = filas ? `<div class="desp-box">${filas}</div>` : '';
+    }
     renderReceta();
   }
   function filaDespensa(d){
@@ -2668,6 +2743,35 @@
     mostaza:['mostaza'],
     jengibre:['jengibre'],
   };
+  // Variantes en italiano (para las recetas italianas): se fusionan con los canónicos en español
+  const SINONIMOS_IT = {
+    pollo:['pollo','petto di pollo'], ternera:['vitello','manzo','fettine'], 'carne picada':['carne macinata','macinato'],
+    cerdo:['maiale','lonza'], bacon:['guanciale','pancetta'], jamon:['prosciutto'], chorizo:['salsiccia'], salchicha:['wurstel'],
+    cordero:['agnello'], pavo:['tacchino'], conejo:['coniglio'],
+    gambas:['gamberetti','gamberi','gambero'], atun:['tonno'], salmon:['salmone'], merluza:['nasello'], bacalao:['baccalà','merluzzo'],
+    sardina:['sardine','acciughe','alici'], pulpo:['polpo'], mejillones:['cozze'], calamar:['calamari','seppia'], pescado:['pesce'],
+    almeja:['vongole','vongola'],
+    nata:['panna'], leche:['latte'], yogur:['yogurt'], queso:['formaggio','parmigiano','pecorino','mozzarella','ricotta','grana','mascarpone'],
+    huevo:['uovo','uova','tuorlo','tuorli','albume'], mantequilla:['burro'],
+    calabacin:['zucchine','zucchina'], berenjena:['melanzane','melanzana'], tomate:['pomodoro','pomodori','pomodorini','passata','pelati'],
+    pimiento:['peperoni','peperone'], cebolla:['cipolla','cipolle'], cebolleta:['scalogno'], ajo:['aglio'], patata:['patate','patata'],
+    champinon:['funghi','fungo','porcini'], judia_verde:['fagiolini'], guisantes:['piselli'], maiz:['mais'], zanahoria:['carota','carote'],
+    espinacas:['spinaci'], lechuga:['lattuga','rucola'], pepino:['cetriolo'], apio:['sedano'], puerro:['porro'], brocoli:['broccoli'],
+    coliflor:['cavolfiore'], col:['cavolo','verza'], calabaza:['zucca'], alcachofa:['carciofi','carciofo'], aguacate:['avocado'],
+    aceituna:['olive','oliva'], esparragos:['asparagi'],
+    garbanzos:['ceci'], lentejas:['lenticchie'], alubias:['fagioli','cannellini','borlotti'],
+    platano:['banana'], manzana:['mela','mele'], pera:['pera','pere'], limon:['limone','limoni'], naranja:['arancia','arance'],
+    fresa:['fragole','fragola'], pina:['ananas'], melocoton:['pesca','pesche'], uva:['uva'], almendra:['mandorle','mandorla'],
+    nuez:['noci','noce'], pasas:['uvetta'], avellana:['nocciole'], cacahuete:['arachidi'],
+    pasta:['pasta','spaghetti','penne','tonnarelli','trenette','linguine','rigatoni','fusilli','tagliatelle','lasagne','gnocchi','risoni','savoiardi'],
+    arroz:['riso'], pan:['pane','pangrattato','pan grattato'], harina:['farina'], avena:['avena'],
+    azucar:['zucchero'], miel:['miele'], chocolate:['cioccolato','cacao'], cafe:['caffè','caffe'], levadura:['lievito'],
+    vino:['vino','marsala'], cerveza:['birra'], caldo:['brodo'], mostaza:['senape'], jengibre:['zenzero'],
+    albahaca:['basilico'], perejil:['prezzemolo'], oregano:['origano'], romero:['rosmarino'], salvia:['salvia'],
+    guindilla:['peperoncino'], pimienta:['pepe'], aceite:['olio'], vinagre:['aceto'], sal:['sale'], canela:['cannella'], vainilla:['vaniglia'],
+  };
+  // Fusiona italiano en SINONIMOS (crea la clave si no existía, p. ej. salvia)
+  for(const c in SINONIMOS_IT){ SINONIMOS[c] = (SINONIMOS[c]||[c]).concat(SINONIMOS_IT[c]); }
   // Índice inverso variante→canónico (precalculado)
   const CANON = (() => { const m={}; for(const c in SINONIMOS){ for(const v of SINONIMOS[c]){ m[norm(v)] = c; } } return m; })();
   // quita plural simple (-s / -es) para emparejar mejor
@@ -2763,12 +2867,15 @@
     const hac=[], casi=[];
     for(const r of RECETAS){
       const faltan = ingredientesQueFaltan(r);
-      const base = { humor:false, n:r.n, t:r.t, r:r.r, ing:r.ing, pasos:r.pasos, tip:r.tip, total:r.ing.length, faltan };
+      const base = { humor:false, n:r.n, t:r.t, r:r.r, ing:r.ing, pasos:r.pasos, tip:r.tip, total:r.ing.length, faltan, cocina:r.cocina };
       if(faltan.length===0) hac.push(base);
       else if(faltan.length<=2) casi.push(base);
     }
-    // primero las completas, luego las que faltan 1, luego las que faltan 2
-    casi.sort((a,b)=>a.faltan.length-b.faltan.length);
+    const esIta = r => r.cocina==='italiana' ? 0 : 1;
+    // 100% hacibles: italianas primero
+    hac.sort((a,b)=> esIta(a)-esIta(b));
+    // casi hacibles: primero por nº que falta, y dentro de eso, italianas primero
+    casi.sort((a,b)=> (a.faltan.length-b.faltan.length) || (esIta(a)-esIta(b)));
     _hacCache = hac.concat(casi);
     return _hacCache;
   }
@@ -2798,38 +2905,120 @@
     if(lista.length < 3){ for(const h of humorPool()){ if(lista.length>=3) break; if(!lista.some(x=>x.n===h.n)) lista.push(h); } }
     return lista;
   }
+  // Banderas dibujadas con franjas (no emoji: se ven siempre). Cada una: orientación + colores.
+  const BANDERAS = {
+    italiana:  { dir:'h', cols:['#009246','#FFFFFF','#CE2B37'] },   // verde-blanco-rojo vertical
+    espanola:  { dir:'v', cols:['#AA151B','#F1BF00','#F1BF00','#AA151B'] },
+    francesa:  { dir:'h', cols:['#0055A4','#FFFFFF','#EF4135'] },
+    mexicana:  { dir:'h', cols:['#006847','#FFFFFF','#CE1126'] },
+    argentina: { dir:'v', cols:['#74ACDF','#FFFFFF','#74ACDF'] },
+    griega:    { dir:'v', cols:['#0D5EAF','#FFFFFF','#0D5EAF'] },
+    japonesa:  { dir:'v', cols:['#FFFFFF','#BC002D','#FFFFFF'] },
+    peruana:   { dir:'h', cols:['#D91023','#FFFFFF','#D91023'] },
+    americana: { dir:'v', cols:['#B22234','#FFFFFF','#B22234'] },
+    china:     { dir:'v', cols:['#DE2910','#DE2910'] },
+    india:     { dir:'v', cols:['#FF9933','#FFFFFF','#138808'] },
+    tailandesa:{ dir:'v', cols:['#A51931','#F4F5F8','#2D2A4A','#F4F5F8','#A51931'] },
+  };
+  function flagHTML(cocina){
+    const b = cocina ? BANDERAS[cocina] : null;
+    if(!b) return '';
+    const dir = b.dir==='h' ? 'to right' : 'to bottom';
+    const n = b.cols.length;
+    const stops = b.cols.map((c,idx)=>`${c} ${Math.round(idx*100/n)}% ${Math.round((idx+1)*100/n)}%`).join(', ');
+    return `<span class="rec-flag" aria-label="${esc(cocina)}"><span class="rec-flag-img" style="background:linear-gradient(${dir}, ${stops});"></span></span>`;
+  }
+  let recetaQuery = '';
+  function buscarRecetas(q){                                    // busca en TODO el catálogo por nombre o ingrediente
+    const nq = norm(q);
+    const cq = canon(q);
+    const res = [];
+    for(const r of RECETAS){
+      const enNombre = norm(r.n).includes(nq);
+      const enIng = r.ing.some(i => norm(i).includes(nq) || canon(i)===cq);
+      if(enNombre || enIng){
+        const faltan = ingredientesQueFaltan(r);
+        res.push({ humor:false, n:r.n, t:r.t, r:r.r, ing:r.ing, pasos:r.pasos, tip:r.tip, total:r.ing.length, faltan, cocina:r.cocina });
+      }
+    }
+    // italianas primero, luego por menos ingredientes que faltan
+    const esIta = x => x.cocina==='italiana' ? 0 : 1;
+    res.sort((a,b)=> (esIta(a)-esIta(b)) || (a.faltan.length-b.faltan.length));
+    return res.slice(0, 30);                                    // tope para no petar el DOM
+  }
+  function tarjetaReceta(r,i){
+    const ingTxt = `${r.total} ${r.total===1?'ingrediente':'ingredientes'}`;
+    const meta = r.humor ? r.pasos[0] : (r.t ? `${r.t} · ${ingTxt}` : ingTxt);
+    const faltaTag = (!r.humor && r.faltan && r.faltan.length)
+      ? `<div class="rec-falta">Te falta: ${esc(r.faltan.join(', '))}</div>` : '';
+    const flagEl = flagHTML(r.cocina);
+    return `<button class="rec-card2${r.humor?' humor':''}${(r.faltan&&r.faltan.length)?' casi':''}" data-recidx="${i}">
+      ${flagEl}
+      <div class="rec-name">${esc(r.n)}</div>
+      <div class="rec-meta">${esc(meta)}</div>
+      ${faltaTag}
+      <span class="rec-cta">Ver receta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+    </button>`;
+  }
   function renderReceta(){
     const slider=document.getElementById('receta-slider'); if(!slider) return;
     const dots=document.getElementById('receta-dots');
     const frase=document.getElementById('rec-hero-frase');
+    const refresh=document.getElementById('rec-refresh');
+    // ── MODO FAVORITAS ──
+    if(recetaQuery==='__favs__'){
+      if(frase) frase.textContent='Tus favoritas';
+      if(refresh) refresh.style.display='none';
+      const favSet=new Set(favoritos);
+      recetasSlider = RECETAS.filter(r=>favSet.has(r.n)).map(r=>{
+        const faltan=ingredientesQueFaltan(r);
+        return { humor:false, n:r.n, t:r.t, r:r.r, ing:r.ing, pasos:r.pasos, tip:r.tip, total:r.ing.length, faltan, cocina:r.cocina };
+      });
+      slider.innerHTML = recetasSlider.length
+        ? recetasSlider.map(tarjetaReceta).join('')
+        : `<div class="box col2 rec-vacio">Aún no tienes favoritas. Abre una receta que te mole y dale a la ⭐</div>`;
+      if(dots) dots.innerHTML='';
+      return;
+    }
+    // ── MODO BÚSQUEDA ──
+    if(recetaQuery){
+      if(frase) frase.textContent='Buscando…';
+      if(refresh) refresh.style.display='none';
+      recetasSlider = buscarRecetas(recetaQuery);
+      if(!recetasSlider.length){
+        slider.innerHTML = `<div class="box col2 rec-vacio">${pickV(['Ni rastro de eso. ¿Lo escribimos bien? 🤔','Nada por aquí. Prueba con otra cosa, chef.','Esa receta se nos escapó. Otra palabra quizá.'])}</div>`;
+      } else {
+        slider.innerHTML = recetasSlider.map(tarjetaReceta).join('');
+      }
+      if(dots) dots.innerHTML='';
+      return;
+    }
+    // ── MODO NORMAL (con lo que tienes) ──
+    if(refresh) refresh.style.display='';
     if(!despensa.length){
       recetasSlider=[];
-      slider.innerHTML = '<div class="box col2" style="color:var(--mute)">Añade productos a tu despensa para ver recetas con lo que tienes.</div>';
+      slider.innerHTML = '<div class="box col2 rec-vacio">Añade productos a tu despensa y te diré qué puedes cocinar. O busca arriba lo que se te antoje. 😋</div>';
       if(frase) frase.textContent='Recetas';
       return;
     }
     if(frase) frase.textContent='Recetas con lo que tienes';
     recetasSlider = construirRecetas();
-    slider.innerHTML = recetasSlider.map((r,i)=>{
-      const ingTxt = `${r.total} ${r.total===1?'ingrediente':'ingredientes'}`;
-      const meta = r.humor ? r.pasos[0] : (r.t ? `${r.t} · ${ingTxt}` : ingTxt);
-      const faltaTag = (!r.humor && r.faltan && r.faltan.length)
-        ? `<div class="rec-falta">Te falta: ${esc(r.faltan.join(', '))}</div>` : '';
-      return `<button class="rec-card2${r.humor?' humor':''}${(r.faltan&&r.faltan.length)?' casi':''}" data-recidx="${i}">
-        <div class="rec-name">${esc(r.n)}</div>
-        <div class="rec-meta">${esc(meta)}</div>
-        ${faltaTag}
-        <span class="rec-cta">Ver receta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
-      </button>`;
-    }).join('');
+    slider.innerHTML = recetasSlider.map(tarjetaReceta).join('');
     if(dots) dots.innerHTML='';
   }
   function recetaActiva(){ return 0; }
   function marcarPunto(i){}
   let _faltanActual = [];
+  let _recetaActualN = '';
+  function pintarFav(){
+    const b=document.getElementById('rec-fav'); if(!b) return;
+    b.classList.toggle('on', esFav(_recetaActualN));
+  }
   function abrirReceta(idx){
     const r = recetasSlider[idx]; if(!r) return;
+    _recetaActualN = r.n;
     document.getElementById('rec-title').textContent=r.n;
+    pintarFav();
     const nIng = (r.ing||[]).length;
     document.getElementById('rec-time').textContent = (r.r ? `${r.t} · ${r.r}` : r.t) || `${nIng} ${nIng===1?'ingrediente':'ingredientes'}`;
     const faltan = new Set((r.faltan||[]).map(norm));
@@ -3090,13 +3279,23 @@
   document.getElementById('btn-import').addEventListener('click', ()=>document.getElementById('file-import').click());
   document.getElementById('btn-demo').addEventListener('click', ()=>{
     // Borra listas/despensa/historial locales y carga datos de prueba (no toca Firebase)
-    [K.items,K.compras,K.despensa,K.store,K.fijos].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+    [K.items,K.compras,K.despensa,K.store,K.fijos,K.favs].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
     sembrarDatos();
     try{ localStorage.removeItem(CLAVE+'-demo-seed'); }catch(e){}
     toastMsg('Datos de prueba cargados');
     setTimeout(()=>location.reload(), 600);
   });
   document.getElementById('file-import').addEventListener('change', e=>{ if(e.target.files[0]) importar(e.target.files[0]); e.target.value=''; });
+  document.getElementById('btn-borrar-todo').addEventListener('click', ()=>{
+    if(!confirm('¿Seguro? Esto borra todas tus listas, tu despensa, favoritas y ajustes de este dispositivo. No se puede deshacer.')) return;
+    try{
+      // borra TODAS las claves de la app (las de K + las auxiliares con prefijo CLAVE)
+      Object.values(K).forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+      for(let i=localStorage.length-1;i>=0;i--){ const k=localStorage.key(i); if(k && k.startsWith(CLAVE)){ try{ localStorage.removeItem(k); }catch(e){} } }
+    }catch(e){}
+    toastMsg('Datos borrados');
+    setTimeout(()=>location.reload(), 600);
+  });
 
   // Varias listas
   document.getElementById('open-lists').addEventListener('click', abrirListas);
@@ -3154,7 +3353,40 @@
     }
   });
   document.getElementById('rec-close').addEventListener('click', closeSheet);
+  document.getElementById('rec-fav').addEventListener('click', ()=>{ toggleFav(_recetaActualN); pintarFav(); if(recetaQuery==='__favs__') renderReceta(); });
+  document.getElementById('rec-favtoggle').addEventListener('click', ()=>{
+    const btn=document.getElementById('rec-favtoggle');
+    const inp=document.getElementById('rec-buscar');
+    if(recetaQuery==='__favs__'){ recetaQuery=''; btn.classList.remove('on'); }
+    else { recetaQuery='__favs__'; btn.classList.add('on'); if(inp){ inp.value=''; document.getElementById('rec-buscar-x').classList.add('hidden'); } }
+    haptic('tap'); renderReceta();
+  });
   document.getElementById('rec-add').addEventListener('click', recetaAddFaltan);
+  // Buscador de recetas (con debounce ligero)
+  (function recBuscador(){
+    const inp=document.getElementById('rec-buscar'), x=document.getElementById('rec-buscar-x');
+    if(!inp) return;
+    let tmr=null;
+    inp.addEventListener('input', ()=>{
+      x.classList.toggle('hidden', !inp.value);
+      document.getElementById('rec-favtoggle').classList.remove('on');
+      clearTimeout(tmr);
+      tmr=setTimeout(()=>{ recetaQuery=inp.value.trim(); renderReceta(); }, 180);
+    });
+    x.addEventListener('click', ()=>{ inp.value=''; recetaQuery=''; x.classList.add('hidden'); renderReceta(); inp.focus(); });
+  })();
+  // Buscador de despensa (debounce ligero)
+  (function despBuscador(){
+    const inp=document.getElementById('desp-buscar'), x=document.getElementById('desp-buscar-x');
+    if(!inp) return;
+    let tmr=null;
+    inp.addEventListener('input', ()=>{
+      x.classList.toggle('hidden', !inp.value);
+      clearTimeout(tmr);
+      tmr=setTimeout(()=>{ despQuery=inp.value.trim(); renderPantry(); }, 160);
+    });
+    x.addEventListener('click', ()=>{ inp.value=''; despQuery=''; x.classList.add('hidden'); renderPantry(); inp.focus(); });
+  })();
   // Selector de categoría
   document.getElementById('cat-close').addEventListener('click', ()=>{ pendienteCat=null; closeSheet(); });
   document.getElementById('cat-grid').addEventListener('click', e=>{ const t=e.target.closest('[data-cat]'); if(t) elegirCategoria(t.dataset.cat); });
@@ -3177,7 +3409,7 @@
   });
   // ═══ MANIFEST (PWA) ═══
   try{
-    const ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23ECFF00'/><path d='M40 82 L25 82 Q16 82 16 73 L16 53 Q16 44 23.15 38.54 L44.44 22.25 Q50 18 55.56 22.25 L76.85 38.54 Q84 44 84 53 L84 73 Q84 82 75 82 L60 82' fill='none' stroke='%23000000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/><path d='M35 57 L45 67 L66 42' fill='none' stroke='%23000000' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/></svg>";
+    const ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FFD60A'/><path d='M44.60 67.28 L36.50 67.28 Q31.64 67.28 31.64 62.42 L31.64 51.62 Q31.64 46.76 35.50 43.81 L47.00 35.02 Q50.00 32.72 53.00 35.02 L64.50 43.81 Q68.36 46.76 68.36 51.62 L68.36 62.42 Q68.36 67.28 63.50 67.28 L55.40 67.28' fill='none' stroke='%23000000' stroke-width='4.3' stroke-linecap='round' stroke-linejoin='round'/><path d='M41.90 53.78 L47.30 59.18 L58.64 45.68' fill='none' stroke='%23000000' stroke-width='4.3' stroke-linecap='round' stroke-linejoin='round'/></svg>";
     const mf = { name:'ladespensa', short_name:'ladespensa', start_url:'.', display:'standalone', background_color:"#FBF9F3", theme_color:"#FBF9F3",
       icons:[{src:ICON,sizes:'any',type:'image/svg+xml',purpose:'any'},{src:ICON,sizes:'any',type:'image/svg+xml',purpose:'maskable'}] };
     const lnk=document.getElementById('mf');
