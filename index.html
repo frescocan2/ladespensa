@@ -3,7 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v20-buscador-despensa-favicon · sellado 2026-06-06 06:55 UTC
+  BUILD: v26-buscador-scroll-version · sellado 2026-06-06 09:05 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -56,7 +56,7 @@
     html,body{height:100%;}
     html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
     body{
-      background:var(--bg); color:var(--ink);
+      background:var(--bg); color:var(--ink); min-height:100dvh;
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; letter-spacing:-0.01em;
       overscroll-behavior-y:contain;
@@ -308,6 +308,7 @@
     .sheet-btn.danger svg{color:var(--danger);}
     .sheet-btn svg{width:20px;height:20px;color:var(--mute);}
     .priv-txt{font-size:13px;line-height:1.55;color:var(--mute);margin:0 2px 10px;}
+    .sheet-ver{ text-align:center; font-size:12px; color:var(--mute-2); margin-top:18px; padding-bottom:4px; letter-spacing:.02em; }
     .colab-note{font-size:13px;line-height:1.5;color:var(--mute);background:var(--card);border-radius:var(--r-card);padding:14px 16px;box-shadow:var(--elev-1);}
     .colab-note b{color:var(--ink);font-weight:600;}
     .empty-sugs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
@@ -488,6 +489,9 @@
     .pan-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
     .pan-name{font-size:16px;font-weight:500;letter-spacing:-0.02em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .pan-row.falta .pan-name{color:var(--mute);}
+    .pan-row.found{ animation:rowFound 2.2s ease; border-radius:12px; }
+    @keyframes rowFound{ 0%{background:transparent;} 15%{background:color-mix(in srgb, var(--accent) 55%, transparent);} 70%{background:color-mix(in srgb, var(--accent) 55%, transparent);} 100%{background:transparent;} }
+    @media (prefers-reduced-motion: reduce){ .pan-row.found{ animation:none; background:color-mix(in srgb, var(--accent) 40%, transparent); } }
     .pan-meta{font-size:13px;color:var(--mute);font-weight:400;letter-spacing:-0.01em;}
     .pan-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
     .pan-act{border:none;cursor:pointer;font:inherit;font-size:13px;font-weight:600;padding:7px 13px;border-radius:var(--r-full);background:var(--chip);color:var(--ink);white-space:nowrap;flex-shrink:0;}
@@ -505,7 +509,7 @@
 
     .hidden{display:none !important;}
     /* ════════════════ DISEÑO BENTO ════════════════ */
-    .app{ max-width:480px; margin:0 auto; padding:16px 14px 96px; }
+    .app{ max-width:480px; margin:0 auto; padding:0 14px calc(96px + env(safe-area-inset-bottom)); }
     body{ background:var(--bg); }
     .view.hidden{ display:none; }
     .view{ animation:bentoFade .3s ease; }
@@ -513,12 +517,17 @@
     @media (prefers-reduced-motion: reduce){ .view{animation:none;} }
 
     /* Cabecera bento */
-    .hd-bento{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 4px 18px; border:none; }
+    /* Cabecera bento: fija arriba. Estable: al scrollear solo aparece una línea sutil (sin blur ni scale). */
+    .hd-bento{ position:sticky; top:0; z-index:30; display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:calc(10px + env(safe-area-inset-top)) 18px 12px; margin:0 -14px 4px;
+      background:var(--bg); border:none; border-bottom:1px solid transparent;
+      transition:border-color .2s linear; }
+    .hd-bento.scrolled{ border-bottom-color:var(--line); }
     .hd-bento .brand{ display:flex; align-items:center; gap:9px; }
+    .hd-bento .hd-actions{ display:flex; gap:8px; }
     .hd-bento .mark{ width:28px; height:28px; flex-shrink:0; color:var(--ink); }
     .hd-bento .mark svg{ width:100%; height:100%; display:block; overflow:visible; }
     .hd-bento .hd-wordmark{ font-size:24px; font-weight:700; letter-spacing:-0.04em; line-height:1; color:var(--ink); position:relative; top:2px; }
-    .hd-bento .hd-actions{ display:flex; gap:8px; }
     .hd-bento .hd-action{ width:42px; height:42px; border-radius:var(--r-full); border:none; background:var(--card); box-shadow:0 1px 2px rgba(0,0,0,.04); display:grid; place-items:center; cursor:pointer; color:var(--ink); }
     .hd-bento .hd-action svg{ width:20px; height:20px; }
     .hd-bento .hd-action:active{ background:var(--press); }
@@ -622,7 +631,7 @@
     .rec-grid .rec-card2:first-child .rec-falta{ color:#9a3412; }
 
     /* Pestañas flotantes */
-    .tabs{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%); display:flex; gap:4px; background:var(--ink); padding:5px; border-radius:var(--r-full); box-shadow:0 8px 28px rgba(0,0,0,.20); z-index:40; }
+    .tabs{ position:fixed; bottom:calc(18px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%); display:flex; gap:4px; background:var(--ink); padding:5px; border-radius:var(--r-full); box-shadow:0 8px 28px rgba(0,0,0,.20); z-index:40; }
     .tabs .tab{ border:none; background:transparent; color:rgba(255,255,255,.55); font:inherit; font-size:14px; font-weight:600; padding:10px 20px; border-radius:var(--r-full); cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color .2s; }
     .tabs .tab.on{ background:var(--bg); color:var(--ink); }
     @media (prefers-color-scheme: dark){ .tabs .tab.on{ background:var(--card); } }
@@ -990,6 +999,8 @@
       Borrar todos mis datos
     </button>
   </div>
+
+  <div class="sheet-ver" id="app-ver">ladespensa</div>
 </div>
 
 <div class="sheet hidden" id="recetasheet">
@@ -1057,6 +1068,7 @@
 <script>
   // ═══ CONFIGURACIÓN ═══
   const CLAVE = 'compra-inteligente-v1';
+  const VERSION = 'v26';   // ← versión visible en Ajustes (mantener en sync con el sello)
 
   // ═══ FIREBASE (rellena para activar la edición en equipo) ═══
   // Crea un proyecto gratis en console.firebase.google.com, añade Realtime Database
@@ -1123,8 +1135,7 @@
   const uid    = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
   const hoyISO = () => new Date().toISOString().slice(0,10);
   const esDeHoy = f => f && f.slice(0,10) === hoyISO();
-  const norm   = s => (s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+  const norm   = s => (s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');  function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
   function buzz(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
   // Vocabulario háptico: patrones consistentes según el tipo de acción.
   const HAPTIC = { tap:8, ligero:6, confirmar:12, destructivo:18, celebrar:[14,45,14], umbral:12 };
@@ -1151,7 +1162,6 @@
   let fijos    = Array.isArray(leer(K.fijos,[])) ? leer(K.fijos,[]) : [];
   let despensa = Array.isArray(leer(K.despensa,[])) ? leer(K.despensa,[]) : [];
   let favoritos = Array.isArray(leer(K.favs,[])) ? leer(K.favs,[]) : [];   // nombres de recetas favoritas
-  let despQuery = '';                                                       // texto del buscador de despensa
   const esFav = n => favoritos.includes(n);
   function toggleFav(n){
     if(!n) return;
@@ -2303,22 +2313,14 @@
     if(!despensa.length){ cont.innerHTML=`<div class="colab-note">Añade lo que sueles tener en casa. Al añadirlo te pregunto cuánto te dura; cuando se acabe el tiempo, lo paso solo a la compra. Con unos cuantos usos aprenderé tu ritmo.</div>
       <div class="empty-sugs"><button class="esug" data-empadd="Leche">+ Leche</button><button class="esug" data-empadd="Huevos">+ Huevos</button><button class="esug" data-empadd="Pan">+ Pan</button><button class="esug" data-empadd="Aceite">+ Aceite</button></div>`; return; }
     const key=d=> d.estado==='agotado' ? -1 : ((d.dias||7)-diasDesde(d.abiertoEn));
-    const dq = norm(despQuery);
-    const coincide = d => !dq || norm(d.nombre).includes(dq) || canon(d.nombre)===canon(despQuery);
     let filas='';
-    let totalFiltrado=0;
     for (const catId of ORDENES.general){                        // agrupado por categoría (sin cabecera)
       const cat = mapaCat[catId]; if(!cat) continue;
-      const grupo = despensa.filter(d=>d.categoria===catId && coincide(d)).sort((a,b)=>key(a)-key(b));
+      const grupo = despensa.filter(d=>d.categoria===catId).sort((a,b)=>key(a)-key(b));
       if(!grupo.length) continue;
-      totalFiltrado += grupo.length;
       filas += grupo.map(filaDespensa).join('');
     }
-    if(dq && !totalFiltrado){
-      cont.innerHTML = `<div class="colab-note">${pickV(['Eso no está en tu despensa. ¿Lo añadimos? 👀','Ni rastro de eso por aquí.','No lo tienes. Aún. 😏'])}</div>`;
-    } else {
-      cont.innerHTML = filas ? `<div class="desp-box">${filas}</div>` : '';
-    }
+    cont.innerHTML = filas ? `<div class="desp-box">${filas}</div>` : '';
     renderReceta();
   }
   function filaDespensa(d){
@@ -2326,7 +2328,7 @@
     const quedan = (d.dias||7)-diasDesde(d.abiertoEn);
     const porAcabar = !falta && quedan<=2;
     const yaEnLista = items.some(i=>!i.comprado && norm(i.nombre)===norm(d.nombre));
-    return `<div class="pan-row${falta?' falta':''}${porAcabar?' poracabar':''}">
+    return `<div class="pan-row${falta?' falta':''}${porAcabar?' poracabar':''}" data-row-id="${d.id}" data-name="${esc(norm(d.nombre))}">
       <span class="pan-ind" style="--c:${c}"></span>
       <div class="pan-mid">
         <span class="pan-name" data-catd="${d.id}">${esc(d.nombre)}</span>
@@ -3375,17 +3377,52 @@
     });
     x.addEventListener('click', ()=>{ inp.value=''; recetaQuery=''; x.classList.add('hidden'); renderReceta(); inp.focus(); });
   })();
-  // Buscador de despensa (debounce ligero)
+  // Buscador de despensa: localiza el producto, hace scroll y lo resalta (no oculta el resto). Con sinónimos.
   (function despBuscador(){
     const inp=document.getElementById('desp-buscar'), x=document.getElementById('desp-buscar-x');
     if(!inp) return;
     let tmr=null;
-    inp.addEventListener('input', ()=>{
-      x.classList.toggle('hidden', !inp.value);
-      clearTimeout(tmr);
-      tmr=setTimeout(()=>{ despQuery=inp.value.trim(); renderPantry(); }, 160);
-    });
-    x.addEventListener('click', ()=>{ inp.value=''; despQuery=''; x.classList.add('hidden'); renderPantry(); inp.focus(); });
+    function irAlProducto(q){
+      const nq=norm(q); if(!nq) return;
+      let cq=''; try{ cq=canon(q); }catch(e){ cq=''; }
+      // candidatos en la despensa: por nombre (parcial) o por sinónimo (canon igual)
+      const match = despensa.find(d=>{
+        const dn=norm(d.nombre);
+        if(dn.includes(nq)) return true;
+        try{ if(cq && canon(d.nombre)===cq) return true; }catch(e){}
+        return false;
+      });
+      const rows=document.getElementById('pantry-rows');
+      rows.querySelectorAll('.pan-row.found').forEach(r=>r.classList.remove('found'));
+      if(!match){ toastMsg(pickV(['Eso no está en tu despensa 👀','Ni rastro de eso por aquí','No lo tienes… aún 😏'])); return; }
+      const row=rows.querySelector(`.pan-row[data-row-id="${match.id}"]`);
+      if(row){
+        row.scrollIntoView({behavior:'smooth', block:'center'});
+        row.classList.add('found');
+        haptic('tap');
+        setTimeout(()=>row.classList.remove('found'), 2200);
+      }
+    }
+    inp.addEventListener('input', ()=>{ x.classList.toggle('hidden', !inp.value); });
+    // busca al pulsar Enter o tras una pausa al escribir
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); inp.blur(); irAlProducto(inp.value); } });
+    inp.addEventListener('input', ()=>{ clearTimeout(tmr); tmr=setTimeout(()=>{ if(inp.value.trim().length>=2) irAlProducto(inp.value); }, 450); });
+    x.addEventListener('click', ()=>{ inp.value=''; x.classList.add('hidden'); document.getElementById('pantry-rows').querySelectorAll('.pan-row.found').forEach(r=>r.classList.remove('found')); inp.focus(); });
+  })();
+  // Versión visible en Ajustes (para testing)
+  (function(){ const v=document.getElementById('app-ver'); if(v) v.textContent='ladespensa · '+VERSION; })();
+  // Header se compacta al hacer scroll (con histéresis para evitar parpadeo)
+  (function headerScroll(){
+    const hd=document.querySelector('.hd-bento'); if(!hd) return;
+    let ticking=false, on=false;
+    const upd=()=>{
+      const y=window.scrollY;
+      if(!on && y>12){ on=true; hd.classList.add('scrolled'); }
+      else if(on && y<4){ on=false; hd.classList.remove('scrolled'); }
+      ticking=false;
+    };
+    window.addEventListener('scroll', ()=>{ if(!ticking){ requestAnimationFrame(upd); ticking=true; } }, {passive:true});
+    upd();
   })();
   // Selector de categoría
   document.getElementById('cat-close').addEventListener('click', ()=>{ pendienteCat=null; closeSheet(); });
