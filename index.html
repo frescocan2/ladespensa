@@ -3,7 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v29-fallback-gracioso · sellado 2026-06-06 09:52 UTC
+  BUILD: v33-glass-borde-brillo · sellado 2026-06-06 10:20 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -517,7 +517,7 @@
 
     .hidden{display:none !important;}
     /* ════════════════ DISEÑO BENTO ════════════════ */
-    .app{ max-width:480px; margin:0 auto; padding:0 14px calc(96px + env(safe-area-inset-bottom)); }
+    .app{ max-width:480px; margin:0 auto; padding:0 14px calc(108px + env(safe-area-inset-bottom)); }
     body{ background:var(--bg); }
     .view.hidden{ display:none; }
     .view{ animation:bentoFade .3s ease; }
@@ -639,10 +639,51 @@
     .rec-grid .rec-card2:first-child .rec-falta{ color:#9a3412; }
 
     /* Pestañas flotantes */
-    .tabs{ position:fixed; bottom:calc(18px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%); display:flex; gap:4px; background:var(--ink); padding:5px; border-radius:var(--r-full); box-shadow:0 8px 28px rgba(0,0,0,.20); z-index:40; }
-    .tabs .tab{ border:none; background:transparent; color:rgba(255,255,255,.55); font:inherit; font-size:14px; font-weight:600; padding:10px 20px; border-radius:var(--r-full); cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color .2s; }
-    .tabs .tab.on{ background:var(--bg); color:var(--ink); }
-    @media (prefers-color-scheme: dark){ .tabs .tab.on{ background:var(--card); } }
+    /* ── Barra flotante: liquid glass (refracción SVG + reflejos especulares + borde de luz) ── */
+    .tabs{ position:fixed; bottom:calc(18px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%);
+      display:flex; gap:4px; padding:5px; border-radius:var(--r-full); z-index:40; isolation:isolate;
+      background:color-mix(in srgb, var(--card) 26%, transparent);
+      box-shadow:0 12px 36px rgba(0,0,0,.20), 0 2px 8px rgba(0,0,0,.10),
+                 0 0 14px rgba(255,255,255,.28),
+                 inset 0 2px 1px rgba(255,255,255,1), inset 0 -3px 8px rgba(255,255,255,.45),
+                 inset 1.5px 0 2px rgba(255,255,255,.55), inset -1.5px 0 2px rgba(255,255,255,.55),
+                 inset 0 0 0 1.5px rgba(255,255,255,.55); }
+    /* Capa 1: el cristal — blur + refracción real con el filtro SVG */
+    .tabs::before{ content:''; position:absolute; inset:0; border-radius:inherit; z-index:-2;
+      backdrop-filter:blur(7px) saturate(190%) url(#liquidglass);
+      -webkit-backdrop-filter:blur(7px) saturate(190%); }
+    /* Capa 2: reflejos especulares múltiples — ceja superior, destello diagonal y brillo inferior */
+    .tabs::after{ content:''; position:absolute; inset:0; border-radius:inherit; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(120% 80% at 25% 0%, rgba(255,255,255,.75) 0%, rgba(255,255,255,.18) 18%, transparent 40%),
+        linear-gradient(150deg, rgba(255,255,255,.45) 0%, rgba(255,255,255,.08) 24%, transparent 46%, transparent 70%, rgba(255,255,255,.10) 86%, rgba(255,255,255,.30) 100%),
+        radial-gradient(90% 60% at 80% 100%, rgba(255,255,255,.28) 0%, transparent 55%); }
+    /* Aro de luz: trazo luminoso que recorre todo el contorno (brillo de borde) */
+    .tabs .glass-rim{ position:absolute; inset:0; border-radius:inherit; z-index:-1; pointer-events:none; padding:1.5px;
+      background:conic-gradient(from 130deg, rgba(255,255,255,.95), rgba(255,255,255,.25) 16%, rgba(255,255,255,.8) 33%, rgba(255,255,255,.12) 52%, rgba(255,255,255,.9) 70%, rgba(255,255,255,.3) 88%, rgba(255,255,255,.95));
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor;
+      mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite:exclude; }
+    @media (prefers-color-scheme: dark){
+      .tabs .glass-rim{ background:conic-gradient(from 130deg, rgba(255,255,255,.55), rgba(255,255,255,.12) 16%, rgba(255,255,255,.45) 33%, rgba(255,255,255,.06) 52%, rgba(255,255,255,.5) 70%, rgba(255,255,255,.14) 88%, rgba(255,255,255,.55)); }
+    }
+    .tabs .tab{ position:relative; border:none; background:transparent; color:var(--ink-soft); font:inherit; font-size:15px; font-weight:600; padding:14px 24px; border-radius:var(--r-full); cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color .2s, background-color .2s; }
+    .tabs .tab.on{ color:var(--ink);
+      background:linear-gradient(180deg, color-mix(in srgb, var(--card) 97%, transparent), color-mix(in srgb, var(--card) 80%, transparent));
+      box-shadow:0 2px 10px rgba(0,0,0,.16), inset 0 1.5px 1px rgba(255,255,255,.95), inset 0 -1px 2px rgba(255,255,255,.4); }
+    @media (prefers-color-scheme: dark){
+      .tabs{ background:color-mix(in srgb, var(--card) 28%, transparent);
+        box-shadow:0 12px 36px rgba(0,0,0,.5), inset 0 1.5px 1px rgba(255,255,255,.18), inset 0 -2px 6px rgba(255,255,255,.08), inset 0 0 0 1px rgba(255,255,255,.12); }
+      .tabs::after{ background:
+        radial-gradient(120% 80% at 25% 0%, rgba(255,255,255,.30) 0%, rgba(255,255,255,.06) 18%, transparent 40%),
+        linear-gradient(150deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.03) 24%, transparent 46%, transparent 70%, rgba(255,255,255,.04) 86%, rgba(255,255,255,.10) 100%),
+        radial-gradient(90% 60% at 80% 100%, rgba(255,255,255,.10) 0%, transparent 55%); }
+      .tabs .tab.on{ background:color-mix(in srgb, var(--card) 95%, transparent); box-shadow:0 2px 10px rgba(0,0,0,.35), inset 0 1.5px 1px rgba(255,255,255,.14); }
+    }
+    /* Si el navegador no soporta backdrop-filter, fondo sólido para que no quede transparente */
+    @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+      .tabs{ background:var(--card); }
+      .tabs::before{ display:none; }
+    }
 
     /* Empty / hist / sug dentro del bento, sin márgenes laterales extra */
     .bento .empty,.bento .hist-wrap,.bento .sug-block,.bento .fijos,.bento .share-in{ margin:0; }
@@ -707,6 +748,13 @@
 </head>
 
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="liquidglass" x="-30%" y="-30%" width="160%" height="160%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.018" numOctaves="3" seed="7" result="noise"/>
+    <feGaussianBlur in="noise" stdDeviation="1.1" result="softNoise"/>
+    <feDisplacementMap in="SourceGraphic" in2="softNoise" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
 <div class="app">
 
   <!-- ══════ HOME · DESPENSA ══════ -->
@@ -896,6 +944,7 @@
 
   <!-- ══════ PESTAÑAS FLOTANTES ══════ -->
   <nav class="tabs" id="tabs">
+    <span class="glass-rim" aria-hidden="true"></span>
     <button class="tab on" data-vista="despensa">Despensa</button>
     <button class="tab" data-vista="lista">Lista</button>
     <button class="tab" data-vista="recetas">Recetas</button>
@@ -1077,7 +1126,7 @@
 <script>
   // ═══ CONFIGURACIÓN ═══
   const CLAVE = 'compra-inteligente-v1';
-  const VERSION = 'v29';   // ← versión visible en Ajustes (mantener en sync con el sello)
+  const VERSION = 'v33';   // ← versión visible en Ajustes (mantener en sync con el sello)
 
   // ═══ FIREBASE (rellena para activar la edición en equipo) ═══
   // Crea un proyecto gratis en console.firebase.google.com, añade Realtime Database

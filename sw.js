@@ -2,7 +2,7 @@
    Estrategia NETWORK-FIRST para el shell: siempre intenta traer la última
    versión de la app; si no hay red, usa la copia en caché (modo offline).
    Firebase y CDNs (otro origen) van siempre a la red. */
-const CACHE = 'ladespensa-v29';
+const CACHE = 'ladespensa-v33';
 const SHELL = ['./', './index.html', './recetas.json'];
 
 self.addEventListener('install', e => {
