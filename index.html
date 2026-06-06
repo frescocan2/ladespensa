@@ -3,7 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v45-chips-despensa-sin-plano · sellado 2026-06-06 17:26 UTC
+  BUILD: v46-fix-sync-lista · sellado 2026-06-06 18:03 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -1142,7 +1142,7 @@
 <script>
   // ═══ CONFIGURACIÓN ═══
   const CLAVE = 'compra-inteligente-v1';
-  const VERSION = 'v45';   // ← versión visible en Ajustes (mantener en sync con el sello)
+  const VERSION = 'v46';   // ← versión visible en Ajustes (mantener en sync con el sello)
 
   // ═══ FIREBASE (rellena para activar la edición en equipo) ═══
   // Crea un proyecto gratis en console.firebase.google.com, añade Realtime Database
@@ -1998,7 +1998,12 @@
     if(!fbReady()){ avisoFirebase(); return; }
     asegurarNombre();
     const existente = store.lists.find(l=>l.room===room);
-    if (existente){ switchList(existente.id); toastMsg('Conectado a '+room); return; }
+    if (existente){
+      activeId = existente.id; store.active = existente.id; items = la().items; guardar();
+      conectarRoom(room, false, existente.id);          // ← reconecta SIEMPRE (antes no se suscribía)
+      renderListBar(); render(); toastMsg('Conectado a '+room);
+      return;
+    }
     const id = uid();
     store.lists.push({ id, nombre:'Lista compartida', items:[], room });
     activeId = id; store.active = id; items = la().items; guardar();
