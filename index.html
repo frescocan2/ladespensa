@@ -3,7 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v26-buscador-scroll-version · sellado 2026-06-06 09:05 UTC
+  BUILD: v29-fallback-gracioso · sellado 2026-06-06 09:52 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -292,6 +292,14 @@
     }
     .sheet.show{transform:translateY(0);}
     .sheet-handle{width:38px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 14px;}
+    /* Hero ilustrado del detalle de receta (genérico por tipo de plato) */
+    .rec-hero{ margin:0 -20px 16px; }
+    .rec-hero:empty{ display:none; }
+    .rec-hero-art{ position:relative; height:150px; display:grid; place-items:center; border-radius:18px; margin:0 8px; overflow:hidden; }
+    .rec-hero-emoji{ font-size:68px; line-height:1; filter:drop-shadow(0 4px 10px rgba(0,0,0,.12)); }
+    .rec-hero-flag{ position:absolute; top:12px; right:12px; }
+    .rec-hero-flag .rec-flag{ position:static; width:30px; height:30px; box-shadow:0 1px 5px rgba(0,0,0,.2); }
+    @media (prefers-color-scheme: dark){ .rec-hero-art{ filter:brightness(.85) saturate(.9); } }
     .sheet-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
     .sheet-h span{font-size:20px;font-weight:700;letter-spacing:-0.02em;}
     .sheet-label{font-size:13px;font-weight:600;color:var(--mute);margin:0 2px 10px;letter-spacing:-0.01em;}
@@ -1005,6 +1013,7 @@
 
 <div class="sheet hidden" id="recetasheet">
   <div class="sheet-handle"></div>
+  <div class="rec-hero" id="rec-hero" aria-hidden="true"></div>
   <div class="sheet-h"><span id="rec-title">Receta</span><div class="rec-h-acts"><button class="rec-fav-btn" id="rec-fav" aria-label="Guardar en favoritas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.3l-5.4 3 1-6-4.3-4.2 6-.9L12 4l2.7 5.2 6 .9-4.3 4.2 1 6z"/></svg></button><button class="txtbtn" id="rec-close">Cerrar</button></div></div>
   <div class="rec-time" id="rec-time"></div>
   <div class="sheet-label">Ingredientes</div>
@@ -1068,7 +1077,7 @@
 <script>
   // ═══ CONFIGURACIÓN ═══
   const CLAVE = 'compra-inteligente-v1';
-  const VERSION = 'v26';   // ← versión visible en Ajustes (mantener en sync con el sello)
+  const VERSION = 'v29';   // ← versión visible en Ajustes (mantener en sync con el sello)
 
   // ═══ FIREBASE (rellena para activar la edición en equipo) ═══
   // Crea un proyecto gratis en console.firebase.google.com, añade Realtime Database
@@ -2312,14 +2321,20 @@
     const btnFijos=document.getElementById('pantry-fromfijos'); if(btnFijos) btnFijos.hidden = !fijos.length;
     if(!despensa.length){ cont.innerHTML=`<div class="colab-note">Añade lo que sueles tener en casa. Al añadirlo te pregunto cuánto te dura; cuando se acabe el tiempo, lo paso solo a la compra. Con unos cuantos usos aprenderé tu ritmo.</div>
       <div class="empty-sugs"><button class="esug" data-empadd="Leche">+ Leche</button><button class="esug" data-empadd="Huevos">+ Huevos</button><button class="esug" data-empadd="Pan">+ Pan</button><button class="esug" data-empadd="Aceite">+ Aceite</button></div>`; return; }
-    const key=d=> d.estado==='agotado' ? -1 : ((d.dias||7)-diasDesde(d.abiertoEn));
-    let filas='';
-    for (const catId of ORDENES.general){                        // agrupado por categoría (sin cabecera)
-      const cat = mapaCat[catId]; if(!cat) continue;
-      const grupo = despensa.filter(d=>d.categoria===catId).sort((a,b)=>key(a)-key(b));
-      if(!grupo.length) continue;
-      filas += grupo.map(filaDespensa).join('');
-    }
+    // Orden único: primero TODO lo agotado (sin importar categoría), luego el resto agrupado por categoría
+    const ordenCat = {}; ORDENES.general.forEach((c,i)=>ordenCat[c]=i);
+    const urgencia = d => (d.dias||7)-diasDesde(d.abiertoEn);
+    const ordenados = despensa.slice().sort((a,b)=>{
+      const aAg = a.estado==='agotado' ? 0 : 1;
+      const bAg = b.estado==='agotado' ? 0 : 1;
+      if(aAg!==bAg) return aAg-bAg;                              // agotados arriba del todo
+      if(aAg===0) return urgencia(a)-urgencia(b);                // entre agotados, da igual; orden estable por urgencia
+      // los que están: agrupados por categoría, y dentro de cada una por lo que se acaba antes
+      const ca=ordenCat[a.categoria]??99, cb=ordenCat[b.categoria]??99;
+      if(ca!==cb) return ca-cb;
+      return urgencia(a)-urgencia(b);
+    });
+    const filas = ordenados.map(filaDespensa).join('');
     cont.innerHTML = filas ? `<div class="desp-box">${filas}</div>` : '';
     renderReceta();
   }
@@ -3016,9 +3031,38 @@
     const b=document.getElementById('rec-fav'); if(!b) return;
     b.classList.toggle('on', esFav(_recetaActualN));
   }
+  // ── Hero ilustrado por tipo de plato (genérico, offline, SVG) ──
+  const TIPOS_PLATO = [
+    { id:'postre',   test:r=>/tiramis|panna|crostata|torta|tarta|biscott|galleta|zabaione|dulce|postre|flan|natilla|brownie|bizcocho|helado|mousse|pastel|chocolate|crema catalana/i.test(r.n) || /azucar|chocolate|nata|miel/.test((r.ing||[]).join(' ')) && /dulce|torta|tarta|postre|crema|bizcocho/i.test(r.n), grad:['#FFE0EC','#FFD6E8'], emoji:'🍰' },
+    { id:'pizza',    test:r=>/pizza|focaccia|calzone/i.test(r.n), grad:['#FFE8D6','#FFD9B8'], emoji:'🍕' },
+    { id:'pasta',    test:r=>/pasta|spaghetti|penne|lasagn|risotto|tagliat|fusilli|macarr|ñoqui|gnocch|carbonara|boloñesa|tallarin|fideo|raviol|canelon/i.test(r.n), grad:['#FFEFC9','#FFE3A3'], emoji:'🍝' },
+    { id:'sopa',     test:r=>/sopa|crema|caldo|gazpacho|minestr|zuppa|pure|potaje|guiso|cocido|estofad/i.test(r.n), grad:['#FFE4CC','#FFD2A8'], emoji:'🍲' },
+    { id:'ensalada', test:r=>/ensalada|insalata|caprese|verdura|vegetal|escalivad/i.test(r.n), grad:['#DCF5DC','#C4EEC4'], emoji:'🥗' },
+    { id:'pescado',  test:r=>/pescado|pesce|merluza|bacalao|baccal|salmon|atun|tonno|sardina|dorada|lubina|marisco|gamba|gamber|vongol|almeja|mejill|pulpo|calamar|sepia/i.test(r.n), grad:['#D6ECFF','#B8DCFF'], emoji:'🐟' },
+    { id:'carne',    test:r=>/pollo|pollo|carne|ternera|vitello|cerdo|maiale|cordero|agnello|filete|chuleta|bistec|escalop|saltimbocca|cotolet|albondig|polpett|hamburg|costill|solomillo|lomo|pavo|conejo/i.test(r.n), grad:['#FFDCD6','#FFC4BA'], emoji:'🍖' },
+    { id:'huevo',    test:r=>/tortilla|huevo|frittata|revuelt|omelet/i.test(r.n), grad:['#FFF2CC','#FFE9A8'], emoji:'🍳' },
+    { id:'arroz',    test:r=>/arroz|paella|riso|riso/i.test(r.n), grad:['#FFF0D6','#FFE6B8'], emoji:'🍚' },
+    { id:'pan',      test:r=>/pan |bruschet|tosta|bocadill|sandwich|empanad/i.test(r.n), grad:['#F3E8D6','#E8D8BE'], emoji:'🥖' },
+  ];
+  function tipoPlato(r){
+    for(const t of TIPOS_PLATO){ try{ if(t.test(r)) return t; }catch(e){} }
+    return { id:'otro', grad:['#FFF3D6','#FFE9B0'], emoji:'🍽️' };
+  }
+  // Emojis graciosos para las recetas que no encajan en un tipo concreto
+  const EMOJIS_FALLBACK = ['🤌','👨‍🍳','😋','🪄','🎲','🦄','🛸','🍀','✨','🤖','🦖','🐙','🎩','🧑‍🚀','🫕'];
+  function heroReceta(r){
+    const t = tipoPlato(r);
+    const emoji = t.id==='otro' ? EMOJIS_FALLBACK[Math.floor(Math.random()*EMOJIS_FALLBACK.length)] : t.emoji;
+    const flag = (r.cocina && BANDERAS[r.cocina]) ? flagHTML(r.cocina) : '';
+    return `<div class="rec-hero-art" style="background:linear-gradient(135deg, ${t.grad[0]} 0%, ${t.grad[1]} 100%)">
+      <span class="rec-hero-emoji">${emoji}</span>
+      ${flag ? `<span class="rec-hero-flag">${flag}</span>` : ''}
+    </div>`;
+  }
   function abrirReceta(idx){
     const r = recetasSlider[idx]; if(!r) return;
     _recetaActualN = r.n;
+    const heroEl=document.getElementById('rec-hero'); if(heroEl) heroEl.innerHTML = r.humor ? '' : heroReceta(r);
     document.getElementById('rec-title').textContent=r.n;
     pintarFav();
     const nIng = (r.ing||[]).length;
