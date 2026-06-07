@@ -3,7 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v48-lista-despensa-homologo · sellado 2026-06-07 08:10 UTC
+  BUILD: v49-fix-sync-rules · sellado 2026-06-07 08:32 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -1145,7 +1145,7 @@
 <script>
   // ═══ CONFIGURACIÓN ═══
   const CLAVE = 'compra-inteligente-v1';
-  const VERSION = 'v48';   // ← versión visible en Ajustes (mantener en sync con el sello)
+  const VERSION = 'v49';   // ← versión visible en Ajustes (mantener en sync con el sello)
 
   // ═══ FIREBASE (rellena para activar la edición en equipo) ═══
   // Crea un proyecto gratis en console.firebase.google.com, añade Realtime Database
@@ -1351,9 +1351,13 @@
   }
 
   // Sincronización POR ÍTEM en modo colaborativo (no se reescribe la lista entera)
-  function colabSet(it){ it._ts = Date.now(); if(collab.on && collab.ref) afterAuth(()=>{ try{ collab.ref.child('items/'+it.id).set(it); }catch(e){} }); }
+  const _tsLocal = new Map();   // id → timestamp del último cambio local (NUNCA va a Firebase)
+  function colabSet(it){
+    _tsLocal.set(it.id, Date.now());
+    if(collab.on && collab.ref) afterAuth(()=>{ try{ const {_ts, ...limpio}=it; collab.ref.child('items/'+it.id).set(limpio); }catch(e){} });
+  }
   const _borradosRecientes = new Map();   // id → cuándo lo borré (para no resucitarlo desde un snapshot viejo)
-  function colabRemove(id){ _borradosRecientes.set(id, Date.now()); if(collab.on && collab.ref) afterAuth(()=>{ try{ collab.ref.child('items/'+id).remove(); }catch(e){} }); }
+  function colabRemove(id){ _borradosRecientes.set(id, Date.now()); _tsLocal.delete(id); if(collab.on && collab.ref) afterAuth(()=>{ try{ collab.ref.child('items/'+id).remove(); }catch(e){} }); }
 
   // ═══ MIGRACIÓN DE ESQUEMA ═══
   function normItem(it){ return { cantidad:1, eventoId:null, ...it, cantidad:(it.cantidad&&it.cantidad>0?it.cantidad:1) }; }
@@ -1958,7 +1962,7 @@
       try{
         if (subirActuales){
           const l = store.lists.find(x=>x.id===listId);
-          const map={}; (l?l.items:[]).forEach(it=> map[it.id]=it);
+          const map={}; (l?l.items:[]).forEach(it=>{ const {_ts, ...limpio}=it; map[it.id]=limpio; });
           collab.ref.child('items').set(map);
         }
         collab.cb = collab.ref.child('items').on('value', snap=>{
@@ -1967,22 +1971,22 @@
           const locales = {}; (l.items||[]).forEach(it=>locales[it.id]=it);
           const ahora = Date.now();
           const arr = [];
-          // recorre lo que hay en la sala, prefiriendo la versión local si es más nueva (cambio aún no propagado)
           Object.keys(val).forEach(k=>{
             const remoto = val[k];
             const local = locales[k];
-            // si lo borré localmente hace poco, no lo resucites con un snapshot viejo
             const borrado = _borradosRecientes.get(k);
-            if(borrado && ahora - borrado < 8000) return;
-            if(local && (local._ts||0) > (remoto._ts||0)) arr.push(local);   // mi cambio es más reciente
+            if(borrado && ahora - borrado < 4000) return;           // no resucitar lo que acabo de borrar
+            const tsLoc = _tsLocal.get(k) || 0;
+            // La sala es la fuente de verdad. Solo conservo mi versión si la cambié hace <1.5s
+            // (mi escritura aún viaja a Firebase y el snapshot llegó antes).
+            if(local && tsLoc > ahora - 1500) arr.push(local);
             else arr.push(remoto);
           });
-          // conserva items locales recién creados que aún no están en la sala
-          (l.items||[]).forEach(it=>{ if(!(it.id in val) && (it._ts||0) > ahora - 8000) arr.push(it); });
-          // limpia borrados antiguos del registro
-          for(const [id,t] of _borradosRecientes){ if(ahora - t > 8000) _borradosRecientes.delete(id); }
+          // items locales recién creados que aún no están en la sala (escritura en vuelo)
+          (l.items||[]).forEach(it=>{ const t=_tsLocal.get(it.id)||0; if(!(it.id in val) && t > ahora - 4000) arr.push(it); });
+          for(const [id,t] of _borradosRecientes){ if(ahora - t > 4000) _borradosRecientes.delete(id); }
           l.items = arr;
-          if (activeId===collab.listId) items = l.items;   // mantén 'items' apuntando a la lista activa
+          if (activeId===collab.listId) items = l.items;
           guardar();
           render();
         });
