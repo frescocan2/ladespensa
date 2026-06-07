@@ -3,7 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v49-fix-sync-rules · sellado 2026-06-07 08:32 UTC
+  BUILD: v53-barra-mini-al-fondo · sellado 2026-06-07 16:03 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -662,14 +662,16 @@
 
     /* Pestañas flotantes */
     /* ── Barra flotante: liquid glass (refracción SVG + reflejos especulares + borde de luz) ── */
-    .tabs{ position:fixed; bottom:calc(18px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%);
-      display:flex; gap:4px; padding:5px; border-radius:var(--r-full); z-index:40; isolation:isolate;
+    .tabs{ position:fixed; bottom:calc(14px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%) scale(1); transform-origin:bottom center;
+      display:flex; gap:4px; padding:6px; border-radius:var(--r-full); z-index:40; isolation:isolate;
+      will-change:transform;
       background:color-mix(in srgb, var(--card) 26%, transparent);
       box-shadow:0 12px 36px rgba(0,0,0,.20), 0 2px 8px rgba(0,0,0,.10),
                  0 0 14px rgba(255,255,255,.28),
                  inset 0 2px 1px rgba(255,255,255,1), inset 0 -3px 8px rgba(255,255,255,.45),
                  inset 1.5px 0 2px rgba(255,255,255,.55), inset -1.5px 0 2px rgba(255,255,255,.55),
                  inset 0 0 0 1.5px rgba(255,255,255,.55); }
+    @media (prefers-reduced-motion: reduce){ .tabs{ transition:none; } }
     /* Capa 1: el cristal — blur + refracción real con el filtro SVG */
     .tabs::before{ content:''; position:absolute; inset:0; border-radius:inherit; z-index:-2;
       backdrop-filter:blur(7px) saturate(190%) url(#liquidglass);
@@ -688,7 +690,7 @@
     @media (prefers-color-scheme: dark){
       .tabs .glass-rim{ background:conic-gradient(from 130deg, rgba(255,255,255,.55), rgba(255,255,255,.12) 16%, rgba(255,255,255,.45) 33%, rgba(255,255,255,.06) 52%, rgba(255,255,255,.5) 70%, rgba(255,255,255,.14) 88%, rgba(255,255,255,.55)); }
     }
-    .tabs .tab{ position:relative; border:none; background:transparent; color:var(--ink-soft); font:inherit; font-size:15px; font-weight:600; padding:14px 24px; border-radius:var(--r-full); cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color .2s, background-color .2s; }
+    .tabs .tab{ position:relative; border:none; background:transparent; color:var(--ink-soft); font:inherit; font-size:15.5px; font-weight:600; padding:15px 27px; border-radius:var(--r-full); cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color .2s, background-color .2s; }
     .tabs .tab.on{ color:var(--ink);
       background:linear-gradient(180deg, color-mix(in srgb, var(--card) 97%, transparent), color-mix(in srgb, var(--card) 80%, transparent));
       box-shadow:0 2px 10px rgba(0,0,0,.16), inset 0 1.5px 1px rgba(255,255,255,.95), inset 0 -1px 2px rgba(255,255,255,.4); }
@@ -1145,7 +1147,7 @@
 <script>
   // ═══ CONFIGURACIÓN ═══
   const CLAVE = 'compra-inteligente-v1';
-  const VERSION = 'v49';   // ← versión visible en Ajustes (mantener en sync con el sello)
+  const VERSION = 'v53';   // ← versión visible en Ajustes (mantener en sync con el sello)
 
   // ═══ FIREBASE (rellena para activar la edición en equipo) ═══
   // Crea un proyecto gratis en console.firebase.google.com, añade Realtime Database
@@ -3702,12 +3704,37 @@
   (function(){ const v=document.getElementById('app-ver'); if(v) v.textContent='ladespensa · '+VERSION; })();
   // Header se compacta al hacer scroll (con histéresis para evitar parpadeo)
   (function headerScroll(){
-    const hd=document.querySelector('.hd-bento'); if(!hd) return;
-    let ticking=false, on=false;
+    const hd=document.querySelector('.hd-bento');
+    const tabs=document.getElementById('tabs');
+    let ticking=false, on=false, lastY=window.scrollY||0;
+    // Animación de la barra controlada en JS (no por transición CSS, que iOS no pinta durante el scroll)
+    let escActual=1, escObjetivo=1, animando=false;
+    const SCALE_MINI=0.82, SCALE_FULL=1;
+    function pintarTabs(){ if(tabs) tabs.style.transform='translateX(-50%) scale('+escActual.toFixed(4)+')'; }
+    function loop(){
+      const d=escObjetivo-escActual;
+      if(Math.abs(d)<0.002){ escActual=escObjetivo; pintarTabs(); animando=false; return; }
+      escActual += d*0.18;                 // easing exponencial: se acerca al objetivo cada frame
+      pintarTabs();
+      requestAnimationFrame(loop);
+    }
+    function fijarObjetivo(v){ if(escObjetivo===v) return; escObjetivo=v; if(!animando){ animando=true; requestAnimationFrame(loop); } }
     const upd=()=>{
       const y=window.scrollY;
-      if(!on && y>12){ on=true; hd.classList.add('scrolled'); }
-      else if(on && y<4){ on=false; hd.classList.remove('scrolled'); }
+      if(hd){
+        if(!on && y>12){ on=true; hd.classList.add('scrolled'); }
+        else if(on && y<4){ on=false; hd.classList.remove('scrolled'); }
+      }
+      if(tabs){
+        const docH = document.documentElement.scrollHeight;
+        const alFondo = (y + window.innerHeight) >= (docH - 24);   // a 24px o menos del final
+        const bajando = y > lastY + 4;
+        const subiendo = y < lastY - 4;
+        if(alFondo) fijarObjetivo(SCALE_MINI);                      // en el fondo, siempre pequeña
+        else if(bajando && y>60) fijarObjetivo(SCALE_MINI);
+        else if(subiendo || y<40) fijarObjetivo(SCALE_FULL);
+      }
+      lastY = y;
       ticking=false;
     };
     window.addEventListener('scroll', ()=>{ if(!ticking){ requestAnimationFrame(upd); ticking=true; } }, {passive:true});
