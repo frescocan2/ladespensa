@@ -3,7 +3,7 @@
   ladespensa · © 2026 Francesco Marigliano. Todos los derechos reservados.
   Código propietario. Prohibida la copia, modificación o distribución sin
   permiso previo y por escrito del titular. All rights reserved.
-  BUILD: v46-fix-sync-lista · sellado 2026-06-06 18:03 UTC
+  BUILD: v48-lista-despensa-homologo · sellado 2026-06-07 08:10 UTC
 -->
 <html lang="es-ES">
 <head>
@@ -219,6 +219,9 @@
     .row-del.armado{padding-right:26px;}
     /* Lista continua (sin tarjetas) */
     .orden-hint{font-size:12px;color:var(--mute);font-weight:500;padding:14px 20px 0;letter-spacing:-0.01em;}
+    .encasa-h{display:flex;align-items:center;padding:22px 20px 8px;}
+    .encasa-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);}
+    .encasa-box{opacity:.96;}
     .lcat{display:flex;align-items:center;gap:9px;padding:20px 20px 7px;}    .lcat-dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex-shrink:0;}
     .lcat-name{font-size:13px;font-weight:600;letter-spacing:-0.01em;color:var(--ink);}
     .lcat-n{margin-left:auto;font-size:13px;font-weight:600;color:var(--mute);font-variant-numeric:tabular-nums;}
@@ -1142,7 +1145,7 @@
 <script>
   // ═══ CONFIGURACIÓN ═══
   const CLAVE = 'compra-inteligente-v1';
-  const VERSION = 'v46';   // ← versión visible en Ajustes (mantener en sync con el sello)
+  const VERSION = 'v48';   // ← versión visible en Ajustes (mantener en sync con el sello)
 
   // ═══ FIREBASE (rellena para activar la edición en equipo) ═══
   // Crea un proyecto gratis en console.firebase.google.com, añade Realtime Database
@@ -1348,8 +1351,9 @@
   }
 
   // Sincronización POR ÍTEM en modo colaborativo (no se reescribe la lista entera)
-  function colabSet(it){ if(collab.on && collab.ref) afterAuth(()=>{ try{ collab.ref.child('items/'+it.id).set(it); }catch(e){} }); }
-  function colabRemove(id){ if(collab.on && collab.ref) afterAuth(()=>{ try{ collab.ref.child('items/'+id).remove(); }catch(e){} }); }
+  function colabSet(it){ it._ts = Date.now(); if(collab.on && collab.ref) afterAuth(()=>{ try{ collab.ref.child('items/'+it.id).set(it); }catch(e){} }); }
+  const _borradosRecientes = new Map();   // id → cuándo lo borré (para no resucitarlo desde un snapshot viejo)
+  function colabRemove(id){ _borradosRecientes.set(id, Date.now()); if(collab.on && collab.ref) afterAuth(()=>{ try{ collab.ref.child('items/'+id).remove(); }catch(e){} }); }
 
   // ═══ MIGRACIÓN DE ESQUEMA ═══
   function normItem(it){ return { cantidad:1, eventoId:null, ...it, cantidad:(it.cantidad&&it.cantidad>0?it.cantidad:1) }; }
@@ -1486,9 +1490,17 @@
     } else {
       it.compradoEn = null; it.checkedBy = '';
       if (it.eventoId){ compras = compras.filter(c=>c.id!==it.eventoId); it.eventoId=null; }
+      marcarAgotadoEnDespensa(it);                                  // destachar = me falta → agotado en la despensa
     }
     guardar(); guardarCompras(); colabSet(it); render(); buzz(12);
     if(it.comprado && antesActivos>0 && items.filter(i=>!i.comprado).length===0){ haptic("celebrar"); toastMsg(resumenCompra()); }
+  }
+  // Marca como agotado (no borra) el producto equivalente en la despensa
+  function marcarAgotadoEnDespensa(it){
+    const d = despensa.find(x=>mismoProducto(x.nombre, it.nombre));
+    if(d && d.estado!=='agotado'){
+      d.estado='agotado'; guardarDespensa(); despColabSet(d);
+    }
   }
   function resumenCompra(){
     const t=tonoActual();
@@ -1527,7 +1539,7 @@
 
   function render(){
     const activos   = items.filter(i=>!i.comprado);
-    const historial = items.filter(i=>i.comprado && esDeHoy(i.compradoEn));
+    const enCasa    = items.filter(i=>i.comprado);            // ya los tengo (tachados, no desaparecen)
 
     let html='';
     if(activos.length && market!=='general'){
@@ -1542,15 +1554,20 @@
       filasActivas += grupo.map(filaActiva).join('');
     }
     if(filasActivas) html += `<div class="lista-box">${filasActivas}</div>`;
+    // "Ya en casa": todo lo comprado, tachado, al final. No desaparece (solo borrado manual).
+    if(enCasa.length){
+      html += `<div class="encasa-h"><span class="encasa-label">Ya en casa · ${enCasa.length}</span></div>`;
+      html += `<div class="lista-box encasa-box">${enCasa.map(filaHecha).join('')}</div>`;
+    }
     document.getElementById('secciones').innerHTML = html;
 
     renderSugeridos();
     renderFijos();
     renderPantry();
 
-    document.getElementById('hist').innerHTML = historial.map(filaHecha).join('');
+    document.getElementById('hist').innerHTML = '';          // sección antigua en desuso (todo va en #secciones)
     document.getElementById('vacio').classList.toggle('hidden', items.length!==0);
-    document.getElementById('histwrap').classList.toggle('hidden', historial.length===0);
+    document.getElementById('histwrap').classList.add('hidden');   // sección antigua: siempre oculta
 
     const ln = document.getElementById('list-name'); if(ln) ln.textContent = la().nombre;
     const sub = document.getElementById('subtitulo');
@@ -1563,7 +1580,7 @@
     // Hero de lista (modo súper): qué falta + progreso, con el tono elegido
     const lh=document.getElementById('lista-hero'), lhF=document.getElementById('lh-frase'), lhFill=document.getElementById('lh-bar-fill');
     if(lh && lhF){
-      const totalHoy = activos.length + historial.length;
+      const totalHoy = activos.length + enCasa.length;
       const pend = activos.length;
       const tn = tonoActual();
       if(items.length===0){
@@ -1582,7 +1599,7 @@
           guasa: pend>6 ? pickV([`Uf, ${b} por delante. Coge fuerzas (y el carro grande).`, `${b} en la lista. Esto es una expedición, no una compra.`]) : pickV([`Te faltan ${b}. ¡Al ataque!`, `${b} y a volar. Tú puedes.`, `Solo ${b}. Pan comido (nunca mejor dicho).`]),
           carino:`Te quedan ${b} por coger. Tú puedes.`
         })[tn];
-        if(lhFill) lhFill.style.width = totalHoy ? Math.round(100*historial.length/totalHoy)+'%' : '0%';
+        if(lhFill) lhFill.style.width = totalHoy ? Math.round(100*enCasa.length/totalHoy)+'%' : '0%';
       }
     }
   }
@@ -1613,7 +1630,8 @@
     const q = (it.cantidad||1)>1 ? `${it.cantidad}× ` : '';
     const quien = (collab.on && it.checkedBy) ? `<span class="row-by">${esc(it.checkedBy)}</span>` : '';
     return `
-      <div class="row done" style="--c:${c}">
+      <div class="row swipe done" data-id="${it.id}" style="--c:${c}">
+        <div class="row-del">Eliminar</div>
         <div class="row-fg">
           <button class="check done" data-toggle="${it.id}" role="checkbox" aria-pressed="true" aria-label="Devolver ${esc(it.nombre)}">${SVG_CHECK}</button>
           <span class="row-name">${q}${esc(it.nombre)}</span>
@@ -1945,11 +1963,27 @@
         }
         collab.cb = collab.ref.child('items').on('value', snap=>{
           const val = snap.val() || {};
-          const arr = Object.keys(val).map(k=>val[k]);     // la sala es la fuente de verdad
           const l = store.lists.find(x=>x.id===collab.listId); if(!l) return;
+          const locales = {}; (l.items||[]).forEach(it=>locales[it.id]=it);
+          const ahora = Date.now();
+          const arr = [];
+          // recorre lo que hay en la sala, prefiriendo la versión local si es más nueva (cambio aún no propagado)
+          Object.keys(val).forEach(k=>{
+            const remoto = val[k];
+            const local = locales[k];
+            // si lo borré localmente hace poco, no lo resucites con un snapshot viejo
+            const borrado = _borradosRecientes.get(k);
+            if(borrado && ahora - borrado < 8000) return;
+            if(local && (local._ts||0) > (remoto._ts||0)) arr.push(local);   // mi cambio es más reciente
+            else arr.push(remoto);
+          });
+          // conserva items locales recién creados que aún no están en la sala
+          (l.items||[]).forEach(it=>{ if(!(it.id in val) && (it._ts||0) > ahora - 8000) arr.push(it); });
+          // limpia borrados antiguos del registro
+          for(const [id,t] of _borradosRecientes){ if(ahora - t > 8000) _borradosRecientes.delete(id); }
           l.items = arr;
-          if (activeId===collab.listId) items = l.items;
-          guardar();                                       // solo caché local (no re-empuja)
+          if (activeId===collab.listId) items = l.items;   // mantén 'items' apuntando a la lista activa
+          guardar();
           render();
         });
         // Presencia: anuncio mi conexión, me autolimpio al desconectar y escucho a los demás
