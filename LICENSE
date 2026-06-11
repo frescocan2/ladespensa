@@ -1,28 +1,75 @@
-Copyright (c) 2026 Francesco Marigliano. Todos los derechos reservados.
-All rights reserved.
+ladespensa — Licencia de uso
 
-"ladespensa" y todo el código fuente, diseño, textos, identidad visual y
-demás materiales contenidos en este repositorio (el "Software") son
-propiedad exclusiva de Francesco Marigliano y están protegidos por las
-leyes de propiedad intelectual e industrial.
+Copyright (c) 2026 Frescocan (Francesco Marigliano)
 
-Queda PROHIBIDO, sin el permiso previo y por escrito del titular:
+================================================================
+RESUMEN EN LENGUAJE LLANO (no sustituye a los términos de abajo)
+================================================================
 
-  - Copiar, reproducir o duplicar el Software, total o parcialmente.
-  - Modificar, adaptar, traducir o crear obras derivadas.
-  - Distribuir, publicar, sublicenciar, vender, alquilar o ceder el
-    Software o cualquiera de sus partes.
-  - Usar el Software con fines comerciales.
-  - Realizar ingeniería inversa salvo en la medida permitida por la ley
-    imperativa aplicable.
+  ✔ Puedes USAR la app libremente.
+  ✔ Puedes COPIAR, ESTUDIAR y MODIFICAR el código.
+  ✔ Puedes REDISTRIBUIR tus versiones y tus mejoras.
+  ✔ Las MEJORAS son bienvenidas.
 
-El Software se publica con el único fin de ser consultado en línea a
-través de la aplicación desplegada por el titular. El acceso al código en
-el navegador, inherente a toda aplicación web, no concede ningún derecho
-de uso, copia o explotación sobre el mismo.
+  ✘ NO puedes usarla con FINES COMERCIALES (venderla, cobrar por
+    ella, integrarla en un producto o servicio de pago, monetizarla
+    con publicidad, etc.) sin permiso por escrito del autor.
+  ⟳ Si distribuyes el código o una versión modificada, debes
+    hacerlo bajo ESTA MISMA licencia (copyleft) y CITAR al autor.
 
-EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO,
-EXPRESA O IMPLÍCITA. EL TITULAR NO SERÁ RESPONSABLE DE NINGUNA
-RECLAMACIÓN, DAÑO U OTRA RESPONSABILIDAD DERIVADA DEL USO DEL SOFTWARE.
+================================================================
+TÉRMINOS Y CONDICIONES
+================================================================
 
-Para solicitar permisos: contacta con el titular del copyright.
+1. DEFINICIONES
+   "El Software" se refiere a "ladespensa": el código fuente, el
+   diseño, los textos, la identidad visual (incluido el logotipo) y
+   demás materiales de este repositorio.
+   "El Autor" se refiere a Frescocan (Francesco Marigliano).
+   "Uso comercial" significa cualquier uso dirigido a una ventaja
+   comercial o compensación económica, directa o indirecta, incluido
+   sin limitación: vender el Software o copias, cobrar por su acceso
+   o uso, ofrecerlo como parte de un producto o servicio de pago,
+   o monetizarlo mediante publicidad o suscripciones.
+
+2. CONCESIÓN DE DERECHOS
+   Por la presente se concede, de forma gratuita y no exclusiva,
+   permiso para usar, copiar, estudiar, modificar y redistribuir el
+   Software, sujeto a todas las condiciones de esta licencia.
+
+3. NO COMERCIAL
+   El Software NO puede emplearse para Uso comercial sin la
+   autorización previa y por escrito del Autor. Para solicitar una
+   licencia comercial, contacta con el Autor a través de
+   https://github.com/frescocan2
+
+4. COPYLEFT (COMPARTIR IGUAL)
+   Cualquier redistribución del Software, con o sin modificaciones,
+   debe realizarse bajo los términos de ESTA MISMA licencia. No se
+   permite imponer condiciones adicionales ni relicenciar el
+   Software o sus obras derivadas bajo términos distintos.
+
+5. ATRIBUCIÓN
+   Toda copia, versión modificada u obra derivada debe conservar
+   este aviso de copyright, esta licencia completa y un crédito
+   visible al Autor.
+
+6. CONSERVACIÓN DEL AVISO
+   Los avisos de copyright y de licencia deben conservarse en todas
+   las copias o partes sustanciales del Software.
+
+7. EXENCIÓN DE GARANTÍA
+   EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN
+   TIPO, EXPRESA O IMPLÍCITA, INCLUIDAS PERO NO LIMITADAS A LAS
+   GARANTÍAS DE COMERCIABILIDAD, IDONEIDAD PARA UN PROPÓSITO
+   PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO EL AUTOR SERÁ
+   RESPONSABLE DE NINGUNA RECLAMACIÓN, DAÑO U OTRA RESPONSABILIDAD,
+   YA SEA EN UNA ACCIÓN CONTRACTUAL, EXTRACONTRACTUAL O DE OTRO TIPO,
+   QUE SURJA DE O EN CONEXIÓN CON EL SOFTWARE O SU USO.
+
+8. TERMINACIÓN
+   El incumplimiento de cualquiera de estas condiciones extingue
+   automáticamente los derechos concedidos por esta licencia.
+
+================================================================
+Frescocan (Francesco Marigliano) · 2026 · https://github.com/frescocan2
